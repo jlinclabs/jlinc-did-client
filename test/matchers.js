@@ -44,42 +44,54 @@ chai.Assertion.addMethod('serializable', function(){
 
 chai.Assertion.addMethod('aPublicKey', function(){
   expect(this._obj).to.be.aBase64EncodedString();
-  expect(this._obj).to.have.lengthOf(43);
+  expect(b64.decode(this._obj)).to.have.lengthOf(sodium.crypto_sign_PUBLICKEYBYTES);
 });
 
 chai.Assertion.addMethod('aPrivateKey', function(){
   expect(this._obj).to.be.aBase64EncodedString();
-  expect(this._obj).to.have.lengthOf(86);
+  expect(b64.decode(this._obj)).to.have.lengthOf(sodium.crypto_sign_SECRETKEYBYTES);
+});
+
+chai.Assertion.addMethod('anEncryptingPublicKey', function(){
+  expect(this._obj).to.be.aBase64EncodedString();
+  expect(b64.decode(this._obj)).to.have.lengthOf(sodium.crypto_box_PUBLICKEYBYTES);
+});
+
+chai.Assertion.addMethod('anEncryptingPrivateKey', function(){
+  expect(this._obj).to.be.aBase64EncodedString();
+  expect(b64.decode(this._obj)).to.have.lengthOf(sodium.crypto_box_SECRETKEYBYTES);
 });
 
 chai.Assertion.addMethod('aSecret', function(){
   expect(this._obj).to.be.aBase64EncodedString();
-  expect(this._obj).to.have.lengthOf(32);
+  expect(b64.decode(this._obj)).to.have.lengthOf(32);
 });
 
 chai.Assertion.addMethod('aCryptoSignKeypair', function(){
-  const { publicKey, privateKey } = this._obj;
+  const { signingPublicKey, signingPrivateKey } = this._obj;
   const itemToSign = `${Math.random()} is my favorite number`;
   expect(
     sodium.crypto_sign_open(
       sodium.crypto_sign(
         Buffer.from(itemToSign, 'utf8'),
-        b64.decode(privateKey),
+        b64.decode(signingPrivateKey),
       ),
-      b64.decode(publicKey)
+      b64.decode(signingPublicKey)
     ).toString()
   ).to.equal(itemToSign);
 });
 
-chai.Assertion.addMethod('aJlincEntity', function(){
+chai.Assertion.addMethod('aDidEntity', function(){
   const entity = this._obj;
   expect(entity).to.be.an('object');
-  expect(entity).to.have.all.keys('publicKey', 'privateKey', 'secret');
-  expect(entity.publicKey).to.be.aPublicKey();
-  expect(entity.privateKey).to.be.aPrivateKey();
-  expect(entity.secret).to.be.aSecret();
+  expect(entity).to.have.all.keys('signingPublicKey', 'signingPrivateKey', 'encryptingPublicKey', 'encryptingPrivateKey', 'registrationSecret');
+  expect(entity.signingPublicKey).to.be.aPublicKey();
+  expect(entity.signingPrivateKey).to.be.aPrivateKey();
+  expect(entity.encryptingPublicKey).to.be.anEncryptingPublicKey();
+  expect(entity.encryptingPrivateKey).to.be.anEncryptingPrivateKey();
+  expect(entity.registrationSecret).to.be.aSecret();
   expect({
-    publicKey: entity.publicKey,
-    privateKey: entity.privateKey,
+    signingPublicKey: entity.signingPublicKey,
+    signingPrivateKey: entity.signingPrivateKey,
   }).to.be.aCryptoSignKeypair();
 });
