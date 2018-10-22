@@ -16,6 +16,9 @@ module.exports =  {
   EncryptError: class EncryptError extends CustomError {},
   DecryptError: class DecryptError extends CustomError {},
 
-  // utilities
+  // registering a new entity
   registerRequest: require('./registerRequest'),
+
+  // utilities
+  createEntity: require('./createEntity'),
 };
