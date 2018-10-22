@@ -1,6 +1,6 @@
 'use strict';
 
-const JLINC = require('../../jlinc-did');
+const JLINC = require('../../didjlinc');
 
 describe('JLINC.version', function() {
   it('should be 0.0.1', function(){

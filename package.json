@@ -1,5 +1,5 @@
 {
-  "name": "jlinc-did",
+  "name": "jlinc-did-client",
   "version": "0.0.1",
   "description": "A node implementation of a JLINC DID client",
   "private": true,
