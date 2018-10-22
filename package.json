@@ -1,9 +1,9 @@
 {
-  "name": "jlincdid",
+  "name": "jlinc-did",
   "version": "0.0.1",
   "description": "A node implementation of a JLINC DID client",
   "private": true,
-  "main": "./jlincdid/index.js",
+  "main": "./jlinc-did/index.js",
   "scripts": {
     "test": "./scripts/test"
   },
