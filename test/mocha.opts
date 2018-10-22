@@ -1,0 +1,6 @@
+--full-trace
+--exit
+--reporter spec
+--colors
+--recursive
+--require ./test/setup.js

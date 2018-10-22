@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+eslint --cache --format codeframe $@ \
+  $(find jlinc-did test | grep '.js$') \
+  $(grep -ril '^#!/usr/bin/env node' ./scripts)

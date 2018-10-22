@@ -1,0 +1,37 @@
+{
+  "name": "jlinc-did",
+  "version": "0.0.1",
+  "description": "A node implementation of a JLINC DID client",
+  "private": true,
+  "main": "./jlinc/index.js",
+  "scripts": {
+    "test": "./scripts/test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jlinclabs/jlinc-did-client.git"
+  },
+  "keywords": [
+    "node",
+    "JLINC",
+    "jlinclabs"
+  ],
+  "author": "JLINC Labs",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jlinclabs/jlinc-did-client/issues"
+  },
+  "homepage": "https://github.com/jlinclabs/jlinc-did-client#readme",
+  "dependencies": {
+    "jsonwebtoken": "^8.3.0",
+    "request": "^2.88.0",
+    "sodium": "^2.0.3",
+    "urlsafe-base64": "^1.0.0"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "eslint": "^5.0.1",
+    "istanbul": "^0.4.5",
+    "mocha": "^5.2.0"
+  }
+}
