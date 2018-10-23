@@ -10,7 +10,7 @@ class CustomError extends Error {
 
 module.exports =  {
   version: require('../package.json').version,
-  contextUrl: 'https://w3id.org/did/v1',
+  Conf: require('../config.json'),
 
   // Custom Errors
   EncryptError: class EncryptError extends CustomError {},
