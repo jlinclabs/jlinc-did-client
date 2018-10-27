@@ -20,5 +20,10 @@ module.exports =  {
   registerRequest: require('./registerRequest'),
 
   // utilities
+  getMasterPublicKey: require('./getMasterPublicKey'),
   createEntity: require('./createEntity'),
+  createDID: require('./createDID'),
+  createNonce: require('./createNonce'),
+  signDID: require('./signDID'),
+  createRegistrantSecret: require('./createRegistrantSecret'),
 };
