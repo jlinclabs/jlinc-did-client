@@ -13,13 +13,13 @@ module.exports =  {
   Conf: require('../config.json'),
 
   // Custom Errors
-  EncryptError: class EncryptError extends CustomError {},
-  DecryptError: class DecryptError extends CustomError {},
+  MasterPublicKeyError: class MasterPublicKeyError extends CustomError {},
+  CreateRegistrantSecretError: class CreateRegistrantSecretError extends CustomError {},
 
   // registering a new entity
   registerRequest: require('./registerRequest'),
 
-  // utilities
+  // registration
   getMasterPublicKey: require('./getMasterPublicKey'),
   createEntity: require('./createEntity'),
   createDID: require('./createDID'),
