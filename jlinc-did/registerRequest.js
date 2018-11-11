@@ -41,7 +41,7 @@ module.exports = async function registerRequest() {
       resolveWithFullResponse: true,
       simple: false
     };
-    console.log(did);
+
     let response = await request(options);
     if (response.statusCode === 200) {
       return {success: true, status: response.statusCode, entity, confirmable: response.body};
@@ -52,7 +52,14 @@ module.exports = async function registerRequest() {
     return e.message;
   }
 
+  /*
+  **********************
+  On success, the entity and confirmable values MUST be captured and persisted to be available
+  for further operations, including formulating a POST to /confirm.
 
+  The entity.signingPrivateKey, entity.encryptingPrivateKey and entity.registrationSecret values
+  SHOULD be carefully protected for security.
+  **********************
+  */
 
-  // return {entity, confirmable(object to send to /confirm)}
 };
