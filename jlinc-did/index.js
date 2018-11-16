@@ -18,6 +18,7 @@ module.exports =  {
 
   // registering a new entity
   registerRequest: require('./registerRequest'),
+  registerConfirm: require('./registerConfirm'),
 
   // registration
   getMasterPublicKey: require('./getMasterPublicKey'),
