@@ -27,4 +27,8 @@ module.exports =  {
   createNonce: require('./createNonce'),
   signDID: require('./signDID'),
   createRegistrantSecret: require('./createRegistrantSecret'),
+
+  // supersede
+  supersedeRequest: require('./supersedeRequest'),
+  supersedeConfirm: require('./supersedeConfirm'),
 };
