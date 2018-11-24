@@ -20,14 +20,6 @@ module.exports = function createDID(entity) {
   }];
   did.publicKey = publicKey;
 
-
-  let secret = {
-    cyphertext: '',
-    nonce: this.createNonce()
-  };
-
   let signature = this.signDID(did, entity);
-
-
-  return {did, secret, signature};
+  return {did, signature};
 };
