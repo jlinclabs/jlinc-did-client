@@ -16,6 +16,10 @@ module.exports =  {
   MasterPublicKeyError: class MasterPublicKeyError extends CustomError {},
   CreateRegistrantSecretError: class CreateRegistrantSecretError extends CustomError {},
 
+  // resolving DIDs
+  resolve: require('./resolve'),
+  history: require('./history'),
+
   // registering a new entity
   registerRequest: require('./registerRequest'),
   registerConfirm: require('./registerConfirm'),
@@ -31,4 +35,7 @@ module.exports =  {
   // supersede
   supersedeRequest: require('./supersedeRequest'),
   supersedeConfirm: require('./supersedeConfirm'),
+
+  // revoke
+  revokeDID: require('./revokeDID'),
 };
