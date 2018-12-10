@@ -1,0 +1,3 @@
+[submodule "didserver"]
+	path = didserver
+	url = https://github.com/jlinclabs/didserver
