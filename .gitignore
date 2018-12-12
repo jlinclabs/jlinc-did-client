@@ -2,5 +2,4 @@ coverage
 .DS_Store
 node_modules
 .eslintcache
-.eslintrc.js
 config.json
