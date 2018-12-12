@@ -29,7 +29,7 @@ Create a `config.json`:
 ### Creating keys for the server
 
 ```js
-require('.').registerRequest().then(console.log)
+require('.').createEntity().then(console.log)
 ```
 
 and you should get back something like:
@@ -57,7 +57,7 @@ Copy the `encryptingPublicKey` and `encryptingPrivateKey` to your servers `confi
 
 ```js
 const jlincDidClient = require('.');
-jlincDidClient.registerRequest()
+jlincDidClient.createEntity()
   .then(response =>
     jlincDidClient.registerConfirm(response.entity, response.confirmable)
   )
