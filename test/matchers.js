@@ -64,7 +64,15 @@ chai.Assertion.addMethod('anEncryptingPrivateKey', function(){
 
 chai.Assertion.addMethod('aSecret', function(){
   expect(this._obj).to.be.aBase64EncodedString();
-  expect(b64.decode(this._obj)).to.have.lengthOf(32);
+  expect(b64.decode(this._obj)).to.have.lengthOf(48);
+});
+
+chai.Assertion.addMethod('aValidJlincDidId', function () {
+  const { jlincDidId, signingPublicKey } = this._obj;
+  const match = jlincDidId.match(/(did:jlinc:)(.*)/);
+  expect(match[1]).to.equal('did:jlinc:');
+  expect(match[2]).to.be.aPublicKey();
+  expect(match[2]).to.equal(signingPublicKey);
 });
 
 chai.Assertion.addMethod('aCryptoSignKeypair', function(){
