@@ -14,7 +14,7 @@ module.exports = async function revokeDID(id, registrationSecret) {
   } catch (e) {
     return e.message;
   }
-  console.log(JSON.stringify({revokeRequest: token}));
+  console.log(JSON.stringify({revokeRequest: token})); // eslint-disable-line
   try {
     let options = {
       method: 'POST',
