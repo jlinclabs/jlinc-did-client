@@ -75,8 +75,16 @@ describe('resolving a DID', function() {
       });
 
       it('should respond with status 303', async function() {
-        const response = await this.didClient.resolve(this.didId);
-        expect(response.status).to.equal(303);
+        expect(
+          await this.didClient.resolve(this.didId)
+        ).to.matchPattern({
+          success: false,
+          status: 303,
+          id: this.didId,
+        });
+        const response = await this.didClient.resolve(this.didId, false, true);
+        expect(response.success).to.be.true;
+        expect(response.resolved.did.id).to.equal(this.latestDidId);
       });
 
       context('when resolving root', function () {
