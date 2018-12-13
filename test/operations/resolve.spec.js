@@ -66,14 +66,50 @@ describe('resolving a DID', function() {
     });
 
     context('when the DID has been superceded', function() {
-      it('should have a test');
+      beforeEach(async function() {
+        await this.registerDid();
+        await this.supersedeDid({
+          didId: this.didId,
+          registrationSecret: this.entity.registrationSecret
+        });
+      });
+
+      it('should respond with status 303', async function() {
+        const response = await this.didClient.resolve(this.didId);
+        expect(response.status).to.equal(303);
+      });
 
       context('when resolving root', function () {
-        beforeEach(async function() {
-          // TODO superced
-        });
         it('should resolve the current DID matching the original DID ID', async function() {
-          // const response = await this.didClient.resolve(this.didId, true);
+          const response = await this.didClient.resolve(this.didId, true);
+          expect(response.success).to.be.true;
+          const {
+            resolved: {
+              did: {
+                ['@context']: context,
+                created,
+                id,
+                publicKey
+              }
+            }
+          } = response;
+
+          expect(context).to.equal('https://w3id.org/did/v1');
+          expect(created).to.be.anISODateString;
+          expect(id).to.not.equal(this.didId);
+          expect(id).equal(this.latestDidId);
+          expect(publicKey[0]).to.matchPattern({
+            id: `${this.latestDidId}#signing`,
+            owner: this.latestDidId,
+            publicKeyBase64: this.latestEntity.signingPublicKey,
+            type: 'ed25519',
+          });
+          expect(publicKey[1]).to.matchPattern({
+            id: `${this.latestDidId}#encrypting`,
+            owner: this.latestDidId,
+            publicKeyBase64: this.latestEntity.encryptingPublicKey,
+            type: 'curve25519',
+          });
         });
       });
     });
