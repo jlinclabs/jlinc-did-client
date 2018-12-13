@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/jlinclabs/jlinc-did-client#readme",
   "dependencies": {
+    "chai-match-pattern": "^1.1.0",
     "child-process-promise": "^2.2.1",
     "jsonwebtoken": "^8.3.0",
     "request": "^2.88.0",
