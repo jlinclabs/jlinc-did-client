@@ -7,16 +7,14 @@ describe('resolving a DID', function() {
 
   context('with an invalid DID id', function() {
     it('should respond with a 404 and success false', async function() {
-      const response = await this.didClient.resolve('did:jlinc:na9qhcfLVpiulTxKR137qm0t9yVpI-fHxdTc0R2DoqI');
-      expect(response.success).to.be.false;
-      expect(response.status).to.equal(404);
-      expect(response.id).to.equal('did:jlinc:na9qhcfLVpiulTxKR137qm0t9yVpI-fHxdTc0R2DoqI');
-      expect(response.error).to.be.undefined;
+      expect(
+        await this.didClient.resolve('did:jlinc:xxxxxxxxxxxxxxxf4k31337k3yxxxxxxxxxxxxxxxx')
+      ).to.matchPattern({
+        success: false,
+        status: 404,
+        id: 'did:jlinc:xxxxxxxxxxxxxxxf4k31337k3yxxxxxxxxxxxxxxxx',
+      });
     });
-  });
-
-  context('when the DID has been revoked', function() {
-    it('should have a test');
   });
 
   context('with a valid DID id', async function (){
@@ -50,6 +48,20 @@ describe('resolving a DID', function() {
         owner: this.didId,
         publicKeyBase64: this.entity.encryptingPublicKey,
         type: 'curve25519',
+      });
+    });
+
+    context('when the DID has been revoked', function() {
+      beforeEach(async function() {
+        await this.didClient.revokeDID(this.didId, this.entity.registrationSecret);
+      });
+
+      it('should respond with status 410', async function() {
+        expect(await this.didClient.resolve(this.didId)).to.matchPattern({
+          success: false,
+          status: 410,
+          id: this.didId,
+        });
       });
     });
 
