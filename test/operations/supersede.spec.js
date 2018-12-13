@@ -7,7 +7,7 @@ describe('superseding a DID', function() {
 
   context('with an invalid DID id', function () {
     it('should respond with 404', async function () {
-      const response = await this.didClient.supersedeRequest('did:jlinc:xxxxxxxxxxxxxxxf4k31337k3yxxxxxxxxxxxxxxxx')
+      const response = await this.didClient.supersedeRequest('did:jlinc:xxxxxxxxxxxxxxxf4k31337k3yxxxxxxxxxxxxxxxx');
       expect(response.success).to.be.false;
       expect(response.status).to.equal(400);
       expect(response.entity).to.be.aDidEntity();

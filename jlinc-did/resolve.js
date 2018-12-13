@@ -2,7 +2,7 @@
 
 const request = require('request-promise');
 
-module.exports = async function resolve(id, root) {
+module.exports = async function resolve(id, root = false, redirect = false) {
   const url = this.Conf.didServerUrl;
 
   //boolean root, if true, indicates a request to get the most current ID
@@ -33,7 +33,8 @@ module.exports = async function resolve(id, root) {
         uri: `${url}${id}`,
         json: true,
         resolveWithFullResponse: true,
-        simple: false
+        simple: false,
+        followRedirect: redirect,
       };
 
       let response = await request(options);
