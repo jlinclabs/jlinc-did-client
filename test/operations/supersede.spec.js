@@ -16,7 +16,7 @@ describe('superseding a DID', function() {
 
   context('with a valid DID id', function () {
     beforeEach(async function(){
-      await this.registerDid();
+      Object.assign(this, await this.registerDid());
     });
 
     it('supersede a DID', async function() {
@@ -26,10 +26,7 @@ describe('superseding a DID', function() {
       const { entity, confirmable } = response;
       expect(entity).to.be.aDidEntity();
       expect(confirmable.challenge).to.be.aRegistrationSecret();
-      expect({
-        jlincDidId: confirmable.id,
-        signingPublicKey: entity.signingPublicKey,
-      }).to.be.aValidJlincDidId();
+      expect(confirmable.id).to.be.aValidJlincDidId();
 
       expect(
         await this.didClient.supersedeConfirm(entity, confirmable, this.entity.registrationSecret)

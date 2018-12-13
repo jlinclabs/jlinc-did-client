@@ -6,7 +6,7 @@ describe('getting the history of DID', function() {
   withDidServer();
 
   context('with an invalid DID id', function() {
-    it('return respond with status 400', async function() {
+    it('should respond with status 400', async function() {
       expect(
         await this.didClient.history('did:jlinc:xxxxxxxxxxxxxxxf4k31337k3yxxxxxxxxxxxxxxxx')
       ).to.matchPattern({
@@ -19,57 +19,64 @@ describe('getting the history of DID', function() {
 
   context('with a valid DID id', function(){
     beforeEach(async function(){
-      await this.registerDid();
+      Object.assign(this, await this.registerDid());
     });
 
     it('should return the history of the DID', async function() {
       const { resolved: { did: firstDid }} = await this.didClient.resolve(this.didId);
+      expect (await this.didClient.history(this.didId)).to.matchPattern({
+        success: true,
+        history: [{ did: firstDid }],
+      });
 
-      let response = await this.didClient.history(this.didId);
-      expect(response.success).to.be.true;
-      expect(response.history[0].did).to.deep.equal(firstDid);
-
-      await this.supersedeDid({
+      let { latestDidId } = await this.supersedeDid({
         didId: this.didId,
         registrationSecret: this.entity.registrationSecret,
       });
-      const { resolved: { did: secondDid }} = await this.didClient.resolve(this.latestDidId);
-      response = await this.didClient.history(this.didId);
-      expect(response.success).to.be.true;
-      expect(response.history[0].did).to.deep.equal(firstDid);
-      expect(response.history[0].superseded).to.exist;
-      expect(response.history[1].did).to.deep.equal(secondDid);
 
-      await this.supersedeDid({
-        didId: this.latestDidId,
-        registrationSecret: this.entity.registrationSecret,
+      const { resolved: { did: secondDid }} = await this.didClient.resolve(latestDidId);
+      expect({superseded: '2018-12-13T23:44:02Z'}).to.matchPattern({superseded: _.isString});
+      expect (await this.didClient.history(this.didId)).to.matchPattern({
+        success: true,
+        history: [
+          { did: firstDid, superseded: _.isString },
+          { did: secondDid }
+        ],
       });
-      const { resolved: { did: thirdDid }} = await this.didClient.resolve(this.latestDidId);
-      response = await this.didClient.history(this.didId);
-      expect(response.success).to.be.true;
-      expect(response.history[0].did).to.deep.equal(firstDid);
-      expect(response.history[0].superseded).to.exist;
-      expect(response.history[1].did).to.deep.equal(secondDid);
-      expect(response.history[1].superseded).to.exist;
-      expect(response.history[2].did).to.deep.equal(thirdDid);
 
-      response = await this.didClient.history(this.latestDidId);
-      expect(response.success).to.be.true;
-      expect(response.history[0].did).to.deep.equal(firstDid);
-      expect(response.history[0].superseded).to.exist;
-      expect(response.history[1].did).to.deep.equal(secondDid);
-      expect(response.history[1].superseded).to.exist;
-      expect(response.history[2].did).to.deep.equal(thirdDid);
+      latestDidId = (await this.supersedeDid({
+        didId: latestDidId,
+        registrationSecret: this.entity.registrationSecret,
+      })).latestDidId;
 
-      await this.didClient.revokeDID(this.latestDidId, this.entity.registrationSecret);
-      response = await this.didClient.history(this.latestDidId);
-      expect(response.success).to.be.true;
-      expect(response.history[0].did).to.deep.equal(firstDid);
-      expect(response.history[0].superseded).to.exist;
-      expect(response.history[1].did).to.deep.equal(secondDid);
-      expect(response.history[1].superseded).to.exist;
-      expect(response.history[2].did).to.deep.equal(thirdDid);
-      expect(response.history[2].revoked).to.exist;
+      const { resolved: { did: thirdDid }} = await this.didClient.resolve(latestDidId);
+      expect (await this.didClient.history(this.didId)).to.matchPattern({
+        success: true,
+        history: [
+          { did: firstDid, superseded: _.isString },
+          { did: secondDid, superseded: _.isString },
+          { did: thirdDid }
+        ],
+      });
+
+      expect (await this.didClient.history(latestDidId)).to.matchPattern({
+        success: true,
+        history: [
+          { did: firstDid, superseded: _.isString },
+          { did: secondDid, superseded: _.isString },
+          { did: thirdDid }
+        ],
+      });
+
+      await this.didClient.revokeDID(latestDidId, this.entity.registrationSecret);
+      expect (await this.didClient.history(latestDidId)).to.matchPattern({
+        success: true,
+        history: [
+          { did: firstDid, superseded: _.isString },
+          { did: secondDid, superseded: _.isString },
+          { did: thirdDid, revoked: _.isString }
+        ],
+      });
     });
   });
 

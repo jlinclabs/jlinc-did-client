@@ -10,6 +10,7 @@ require('./matchers');
 
 chai.use(chaiMatchPattern);
 
+global._ = chaiMatchPattern.getLodashModule();
 global.expect = chai.expect;
 
 global.console.inspect = function(...args){
