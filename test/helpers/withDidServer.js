@@ -15,10 +15,7 @@ const didServerHelpers = {
     const { entity, confirmable } = response;
     response = await didClient.registerConfirm(entity, confirmable);
     if (response.error) throw new Error(`error in registerConfirm: ${response.error}`);
-    Object.assign(this, {
-      didId: confirmable.id,
-      entity,
-    });
+    return { confirmable, entity };
   },
 
   async supersedeDid({didId, registrationSecret}) {
