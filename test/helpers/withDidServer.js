@@ -10,19 +10,33 @@ const didServerHelpers = {
   didClient,
 
   async registerDid() {
-    const response = await didClient.registerRequest();
-    if (response.error) throw new Error(`error registering did ${response.error}`);
-    const { entity, confirmable } = await didClient.registerRequest();
-    await didClient.registerConfirm(entity, confirmable);
+    let response = await didClient.registerRequest();
+    if (response.error) throw new Error(`error in registerRequest: ${response.error}`);
+    const { entity, confirmable } = response;
+    response = await didClient.registerConfirm(entity, confirmable);
+    if (response.error) throw new Error(`error in registerConfirm: ${response.error}`);
     Object.assign(this, {
       didId: confirmable.id,
       entity,
     });
   },
+
+  async supersedeDid({didId, registrationSecret}) {
+    let response = await didClient.supersedeRequest(didId);
+    if (response.error) throw new Error(`error in supersedeRequest: ${error}`);
+    const { entity, confirmable } = response;
+    response = await didClient.supersedeConfirm(entity, confirmable, registrationSecret);
+    if (response.error) throw new Error(`error in supersedeConfirm: ${error}`);
+    Object.assign(this, {
+      latestDidId: confirmable.id,
+      latestEntity: entity,
+    });
+  },
 };
 
-let didServerProcess;
 module.exports = function withDidServer(){
+  let didServerProcess;
+
   before(async function() {
     Object.assign(this, didServerHelpers);
     didServerProcess = spawn('./scripts/didserver-start');
