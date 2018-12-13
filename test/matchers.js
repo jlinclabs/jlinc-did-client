@@ -62,7 +62,7 @@ chai.Assertion.addMethod('anEncryptingPrivateKey', function(){
   expect(b64.decode(this._obj)).to.have.lengthOf(sodium.crypto_box_SECRETKEYBYTES);
 });
 
-chai.Assertion.addMethod('aSecret', function(){
+chai.Assertion.addMethod('aRegistrationSecret', function(){
   expect(this._obj).to.be.aBase64EncodedString();
   expect(b64.decode(this._obj)).to.have.lengthOf(48);
 });
@@ -97,9 +97,13 @@ chai.Assertion.addMethod('aDidEntity', function(){
   expect(entity.signingPrivateKey).to.be.aPrivateKey();
   expect(entity.encryptingPublicKey).to.be.anEncryptingPublicKey();
   expect(entity.encryptingPrivateKey).to.be.anEncryptingPrivateKey();
-  expect(entity.registrationSecret).to.be.aSecret();
+  expect(entity.registrationSecret).to.be.aRegistrationSecret();
   expect({
     signingPublicKey: entity.signingPublicKey,
     signingPrivateKey: entity.signingPrivateKey,
   }).to.be.aCryptoSignKeypair();
+});
+
+chai.Assertion.addMethod('anISODateString', function(){
+  expect(this._obj).to.match(/^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d.\d\d\dZ$/);
 });
