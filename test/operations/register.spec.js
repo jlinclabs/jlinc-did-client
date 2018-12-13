@@ -10,7 +10,7 @@ describe('registering a new DID', function() {
     expect(response.status).to.equal(200);
     const { entity, confirmable } = response;
     expect(entity).to.be.aDidEntity();
-    expect(confirmable.challenge).to.be.aSecret();
+    expect(confirmable.challenge).to.be.aRegistrationSecret();
     expect({
       jlincDidId: confirmable.id,
       signingPublicKey: entity.signingPublicKey,
