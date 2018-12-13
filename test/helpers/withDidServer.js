@@ -3,11 +3,28 @@
 const request = require('../../lib/request');
 const spawn = require('child_process').spawn;
 const exec = require('child-process-promise').exec;
+const didClient = require('../../jlinc-did');
+
+const didServerHelpers = {
+
+  didClient,
+
+  async registerDid() {
+    const response = await didClient.registerRequest();
+    if (response.error) throw new Error(`error registering did ${response.error}`);
+    const { entity, confirmable } = await didClient.registerRequest();
+    await didClient.registerConfirm(entity, confirmable);
+    Object.assign(this, {
+      didId: confirmable.id,
+      entity,
+    });
+  },
+};
 
 let didServerProcess;
 module.exports = function withDidServer(){
-
   before(async function() {
+    Object.assign(this, didServerHelpers);
     didServerProcess = spawn('./scripts/didserver-start');
     await tryForXMiliseconds(isDidServerRunning);
   });
@@ -45,5 +62,4 @@ module.exports = function withDidServer(){
     };
     return trier();
   }
-
 };
