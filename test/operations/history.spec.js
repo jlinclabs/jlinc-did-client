@@ -6,7 +6,7 @@ describe('getting the history of DID', function() {
   withDidServer();
 
   context('with an invalid DID id', function() {
-    it('return respond with status 400', async function() {
+    it('should respond with status 400', async function() {
       expect(
         await this.didClient.history('did:jlinc:xxxxxxxxxxxxxxxf4k31337k3yxxxxxxxxxxxxxxxx')
       ).to.matchPattern({
