@@ -1,6 +1,6 @@
 'use strict';
 
-const request = require('../../lib/request');
+const request = require('request-promise');
 const spawn = require('child_process').spawn;
 const exec = require('child-process-promise').exec;
 const didClient = require('../../jlinc-did');
@@ -15,10 +15,7 @@ const didServerHelpers = {
     const { entity, confirmable } = response;
     response = await didClient.registerConfirm(entity, confirmable);
     if (response.error) throw new Error(`error in registerConfirm: ${response.error}`);
-    Object.assign(this, {
-      didId: confirmable.id,
-      entity,
-    });
+    return { didId: confirmable.id, entity };
   },
 
   async supersedeDid({didId, registrationSecret}) {
@@ -27,12 +24,40 @@ const didServerHelpers = {
     const { entity, confirmable } = response;
     response = await didClient.supersedeConfirm(entity, confirmable, registrationSecret);
     if (response.error) throw new Error(`error in supersedeConfirm: ${error}`);
-    Object.assign(this, {
+    return {
       latestDidId: confirmable.id,
       latestEntity: entity,
-    });
+    };
   },
 };
+
+async function getDidServerIndex() {
+  return await request.get('http://localhost:5001');
+}
+
+async function expectDidServerToHaveValidKeys(){
+  const response = await getDidServerIndex();
+  const masterPublicKey = JSON.parse(response).masterPublicKey;
+  if (masterPublicKey === 'aPublicKey') {
+    throw new Error('Invalid config.toml !!! Please add a valid public key to your didserver config.toml');
+  }
+}
+
+const now = () => (new Date()).getTime();
+
+async function tryForXMilliseconds(functionToTry, timeLimit = 100) {
+  const start = now();
+  const trier = async function(){
+    try {
+      return await functionToTry();
+    } catch (error) {
+      const timeElapsed = now() - start;
+      if (timeElapsed >= timeLimit) throw error;
+      return await trier();
+    }
+  };
+  return await trier();
+}
 
 module.exports = function withDidServer(){
   let didServerProcess;
@@ -40,7 +65,8 @@ module.exports = function withDidServer(){
   before(async function() {
     Object.assign(this, didServerHelpers);
     didServerProcess = spawn('./scripts/didserver-start');
-    await tryForXMiliseconds(isDidServerRunning);
+    await tryForXMilliseconds(getDidServerIndex);
+    await expectDidServerToHaveValidKeys();
   });
 
   beforeEach(async function(){
@@ -51,29 +77,4 @@ module.exports = function withDidServer(){
     didServerProcess.kill();
   });
 
-  async function isDidServerRunning() {
-    const response = await request.get('http://localhost:5001');
-    if (!response) throw Error('DID server not responding');
-    const masterPublicKey = JSON.parse(response).masterPublicKey;
-    if (masterPublicKey === 'aPublicKey') {
-      throw new Error('Please add a valid public key to your didserver config.toml');
-    }
-  }
-
-  async function tryForXMiliseconds(functionToTry, timeLimit = 400) {
-    const initialTime = new Date();
-    const initialMs = initialTime.getTime();
-
-    const trier = async function(){
-      try {
-        return await functionToTry();
-      } catch (error) {
-        const tryTime = new Date();
-        const tryMs = tryTime.getTime();
-        if (tryMs - initialMs >= timeLimit) throw error;
-        return await trier();
-      }
-    };
-    return trier();
-  }
 };

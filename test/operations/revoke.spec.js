@@ -20,7 +20,8 @@ describe('revoking a DID', function() {
 
   context('with a valid DID id', async function (){
     beforeEach(async function(){
-      await this.registerDid();
+      const { didId, entity } = await this.registerDid();
+      Object.assign(this, { didId, entity });
     });
 
     context('with an invalid registration secret', function() {

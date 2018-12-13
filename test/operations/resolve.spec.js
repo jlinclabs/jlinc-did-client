@@ -19,14 +19,15 @@ describe('resolving a DID', function() {
 
   context('with a valid DID id', async function (){
     beforeEach(async function(){
-      await this.registerDid();
+      Object.assign(this, await this.registerDid());
     });
 
     it('should resolve the DID', async function() {
       const response = await this.didClient.resolve(this.didId);
-      expect(response.success).to.be.true;
-      expect(response.resolved).to.exist;
-      expect(response.resolved.did).to.exist;
+      expect(response).to.matchPattern({
+        success: true,
+        resolved: { did: _.isObject },
+      });
       const {
         ['@context']: context,
         created,
@@ -67,11 +68,13 @@ describe('resolving a DID', function() {
 
     context('when the DID has been superceded', function() {
       beforeEach(async function() {
-        await this.registerDid();
-        await this.supersedeDid({
-          didId: this.didId,
-          registrationSecret: this.entity.registrationSecret
-        });
+        Object.assign(
+          this,
+          await this.supersedeDid({
+            didId: this.didId,
+            registrationSecret: this.entity.registrationSecret
+          })
+        );
       });
 
       it('should respond with status 303', async function() {

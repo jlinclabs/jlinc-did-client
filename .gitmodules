@@ -1,3 +1,3 @@
 [submodule "didserver"]
 	path = didserver
-	url = https://github.com/jlinclabs/didserver
+	url = git@github.com:jlinclabs/didserver.git

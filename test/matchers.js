@@ -68,11 +68,7 @@ chai.Assertion.addMethod('aRegistrationSecret', function(){
 });
 
 chai.Assertion.addMethod('aValidJlincDidId', function () {
-  const { jlincDidId, signingPublicKey } = this._obj;
-  const match = jlincDidId.match(/(did:jlinc:)(.*)/);
-  expect(match[1]).to.equal('did:jlinc:');
-  expect(match[2]).to.be.aPublicKey();
-  expect(match[2]).to.equal(signingPublicKey);
+  expect(this._obj).to.match(/^did:jlinc:.*$/);
 });
 
 chai.Assertion.addMethod('aCryptoSignKeypair', function(){

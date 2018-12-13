@@ -8,10 +8,7 @@ Specifically: https://did-spec.jlinc.org/#6-operations
 
 ## Nomenclature
 
-
-
 ## Expected Usage
-
 
 ## Development
 
@@ -52,6 +49,12 @@ and you should get back something like:
 ```
 
 Copy the `encryptingPublicKey` and `encryptingPrivateKey` to your servers `config.toml`
+
+### Creating server database
+
+```
+./scripts/didserver-db-create
+```
 
 ### Manual Testing! :D
 
