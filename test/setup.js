@@ -4,7 +4,11 @@ process.env.NODE_ENV = 'test';
 
 const { inspect } = require('util');
 const chai = require('chai');
+const chaiMatchPattern = require('chai-match-pattern');
+
 require('./matchers');
+
+chai.use(chaiMatchPattern);
 
 global.expect = chai.expect;
 
