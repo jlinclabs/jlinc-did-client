@@ -12,17 +12,6 @@ Specifically: https://did-spec.jlinc.org/#6-operations
 
 ## Development
 
-### Setup
-
-Create a `config.json`:
-
-```json
-{
-  "contextUrl": "https://w3id.org/did/v1",
-  "didServerUrl": "http://localhost:5001/"
-}
-```
-
 ### Creating keys for the server
 
 ```js

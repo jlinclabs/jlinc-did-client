@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const request = require('request-promise');
 
 module.exports = async function revokeDID(id, registrationSecret) {
-  const url = this.Conf.didServerUrl;
+  const url = this.didServerUrl;
   const payload = {id};
 
   //create the JWT

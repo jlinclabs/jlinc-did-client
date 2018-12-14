@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 const request = require('request-promise');
 
 module.exports = async function registerConfirm(entity, confirmable) {
-  const url = this.Conf.didServerUrl;
+  const url = this.didServerUrl;
   const didID = confirmable.id;
   const challenge = confirmable.challenge;
   let signature;

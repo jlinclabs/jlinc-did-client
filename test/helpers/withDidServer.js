@@ -67,6 +67,7 @@ module.exports = function withDidServer(){
     didServerProcess = spawn('./scripts/didserver-start');
     await tryForXMilliseconds(getDidServerIndex);
     await expectDidServerToHaveValidKeys();
+    didClient.didServerUrl = 'http://localhost:5001/';
   });
 
   beforeEach(async function(){

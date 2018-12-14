@@ -3,7 +3,7 @@
 const request = require('request-promise');
 
 module.exports = async function history(id) {
-  const url = this.Conf.didServerUrl;
+  const url = this.didServerUrl;
 
   try {
     let options = {

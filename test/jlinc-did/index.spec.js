@@ -10,6 +10,6 @@ describe('DID.version', function() {
 
 describe('DID.contextUrl', function() {
   it('should be "https://w3id.org/did/v1"', function(){
-    expect(DID.Conf.contextUrl).to.equal('https://w3id.org/did/v1');
+    expect(DID.contextUrl).to.equal('https://w3id.org/did/v1');
   });
 });

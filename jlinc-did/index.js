@@ -10,7 +10,9 @@ class CustomError extends Error {
 
 module.exports =  {
   version: require('../package.json').version,
-  Conf: require('../config.json'),
+
+  contextUrl: 'https://w3id.org/did/v1',
+  // didServerUrl: 'http://localhost:5001/',
 
   // Custom Errors
   MasterPublicKeyError: class MasterPublicKeyError extends CustomError {},

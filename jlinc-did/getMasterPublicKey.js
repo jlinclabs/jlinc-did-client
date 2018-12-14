@@ -8,7 +8,7 @@ module.exports = function getMasterPublicKey(callback) {
   if (process.env.masterPublicKey) {
     return callback(process.env.masterPublicKey);
   } else {
-    let url = this.Conf.didServerUrl;
+    let url = this.didServerUrl;
     request(url, function (error, response, body) {
       console.log('error:', error); // Print the error if one occurred
       console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received

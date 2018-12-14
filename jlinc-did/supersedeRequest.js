@@ -7,7 +7,7 @@ module.exports = async function supersedeRequest(supersededID) {
 
   // get the DID server's public key unless we've already cached it
   let serverPublicKey;
-  let url = this.Conf.didServerUrl;
+  let url = this.didServerUrl;
   if (process.env.serverPublicKey) {
     serverPublicKey = process.env.serverPublicKey;
   } else {

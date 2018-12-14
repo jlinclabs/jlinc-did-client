@@ -3,7 +3,7 @@
 const request = require('request-promise');
 
 module.exports = async function resolve(id, root = false, redirect = false) {
-  const url = this.Conf.didServerUrl;
+  const url = this.didServerUrl;
 
   //boolean root, if true, indicates a request to get the most current ID
   //in the same root chain as the requested ID

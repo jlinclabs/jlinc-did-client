@@ -1,8 +1,10 @@
 'use strict';
 
 module.exports = function createDID(entity) {
+  if (!this.contextUrl) throw new Error(`JLINCDIDClient.contextUrl must be set`);
+
   let did = {
-    '@context': this.Conf.contextUrl,
+    '@context': this.contextUrl,
     id: `did:jlinc:${entity.signingPublicKey}`,
     created: new Date().toISOString()
   };
