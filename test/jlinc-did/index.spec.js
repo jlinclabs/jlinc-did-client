@@ -5,6 +5,13 @@ const DID = require('../../jlinc-did');
 describe('DID.version', function() {
   it('should be 0.0.1', function(){
     expect(DID.version).to.equal('0.0.1');
+
+
+    expect({
+      doesMatchPatternWork: 'yes'
+    }).to.matchPattern({
+      doesMatchPatternWork: _.isString
+    });
   });
 });
 

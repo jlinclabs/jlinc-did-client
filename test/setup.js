@@ -10,8 +10,16 @@ require('./matchers');
 
 chai.use(chaiMatchPattern);
 
+console.log('assigning global._', ['was:', global._]);
+
 global._ = chaiMatchPattern.getLodashModule();
 global.expect = chai.expect;
+
+expect({
+  doesMatchPatternWork: 'yes'
+}).to.matchPattern({
+  doesMatchPatternWork: _.isString
+});
 
 global.console.inspect = function(...args){
   return global.console.log(...args.map(arg => inspect(arg, { showHidden: true, depth: null })));
