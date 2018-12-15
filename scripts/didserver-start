@@ -4,4 +4,8 @@ set -e
 set -x
 
 cd didserver
+if [ "$(uname)" == "Darwin" ]; then
 ./dist/mac/didserver
+elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+./dist/linux/didserver
+fi
