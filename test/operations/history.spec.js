@@ -26,7 +26,7 @@ describe('getting the history of DID', function() {
       const { resolved: { did: firstDid }} = await this.didClient.resolve(this.didId);
       expect (await this.didClient.history(this.didId)).to.matchPattern({
         success: true,
-        history: [{ did: firstDid }],
+        history: [{ did: firstDid, valid: _.isString }],
       });
 
       let { latestDidId } = await this.supersedeDid({
@@ -40,7 +40,7 @@ describe('getting the history of DID', function() {
         success: true,
         history: [
           { did: firstDid, superseded: _.isString },
-          { did: secondDid }
+          { did: secondDid, valid: _.isString }
         ],
       });
 
@@ -55,7 +55,7 @@ describe('getting the history of DID', function() {
         history: [
           { did: firstDid, superseded: _.isString },
           { did: secondDid, superseded: _.isString },
-          { did: thirdDid }
+          { did: thirdDid, valid: _.isString }
         ],
       });
 
@@ -64,7 +64,7 @@ describe('getting the history of DID', function() {
         history: [
           { did: firstDid, superseded: _.isString },
           { did: secondDid, superseded: _.isString },
-          { did: thirdDid }
+          { did: thirdDid, valid: _.isString }
         ],
       });
 
