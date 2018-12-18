@@ -85,9 +85,6 @@ describe('resolving a DID', function() {
           status: 303,
           id: this.didId,
         });
-        const response = await this.didClient.resolve(this.didId, false, true);
-        expect(response.success).to.be.true;
-        expect(response.resolved.did.id).to.equal(this.latestDidId);
       });
 
       context('when resolving root', function () {
