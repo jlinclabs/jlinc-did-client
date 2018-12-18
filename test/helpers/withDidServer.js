@@ -1,11 +1,15 @@
 'use strict';
 
+const path = require('path');
 const request = require('request-promise');
-const spawn = require('child_process').spawn;
-const exec = require('child-process-promise').exec;
+const { spawn, execSync } = require('child_process');
 const didClient = require('../../jlinc-did');
 
 const didServerHelpers = {
+
+  async getDidServerIndex() {
+    return await didServer.request('get', '/');
+  },
 
   didClient,
 
@@ -31,17 +35,84 @@ const didServerHelpers = {
   },
 };
 
-async function getDidServerIndex() {
-  return await request.get('http://localhost:5001');
-}
+module.exports = function withDidServer(){
 
-async function expectDidServerToHaveValidKeys(){
-  const response = await getDidServerIndex();
-  const masterPublicKey = JSON.parse(response).masterPublicKey;
-  if (masterPublicKey === 'aPublicKey') {
-    throw new Error('Invalid config.toml !!! Please add a valid public key to your didserver config.toml');
+  before(async function() {
+    Object.assign(this, didServerHelpers);
+    await didServer.start();
+    didClient.didServerUrl = didServer.url+'/'; // FML
+  });
+
+  beforeEach(async function(){
+    await didServer.reset();
+  });
+
+};
+
+const didServer = {
+  port: 3044,
+  url: 'http://localhost:3044',
+  db: 'jlinc_did_server_test',
+  path: path.resolve(__dirname, '../../didserver'),
+
+  execOptions(){
+    return {
+      shell: true,
+      cwd: this.path,
+      silent: true,
+      // stdio: 'inherit',
+      env: {
+        DATABASE_URL: `postgres://root@localhost:26257/${this.db}?sslmode=disable`,
+        URL: this.url,
+        PORT: `${this.port}`,
+        PUBLIC_KEY:  'xRliWWNCToxApYwfRFf8hIUf2x7E6sn2MmIfwAJzokI',
+        PRIVATE_KEY: '8hwb4iOJ05LqzuhAi4r8sHccPh_HgkOd_ugbAGhZE74',
+        CONTEXT: 'https://w3id.org/did/v1',
+      },
+    };
+  },
+
+  async setup(){
+    execSync(`${this.path}/scripts/db-reset`, this.execOptions());
+  },
+
+  async start(){
+    if (this.childProcess) return;
+    await this.setup();
+    this.childProcess = spawn(`${this.path}/scripts/start`, [], this.execOptions());
+    await tryForXMilliseconds(() => this.getMasterPublicKey());
+  },
+
+  async reset(){
+    // execSync(`${this.path}/scripts/db-reset`, this.execOptions());
+    execSync(`
+      cockroach sql --insecure --execute="SET database = ${this.db}; TRUNCATE didstore"
+    `);
+  },
+
+  async stop(){
+    if (this.childProcess) this.childProcess.kill('SIGINT');
+  },
+
+  async request(method, path){
+    return await request.get({
+      method,
+      uri: `${this.url}${path}`,
+      json: true,
+    });
+  },
+
+  async getMasterPublicKey(){
+    const { masterPublicKey } = await this.request('get', '/');
+    return masterPublicKey;
   }
-}
+};
+
+function onExit(){ didServer.stop(); }
+process.on('exit', onExit);
+process.on('SIGINT', onExit);
+process.on('SIGUSR1', onExit);
+process.on('SIGUSR2', onExit);
 
 const now = () => (new Date()).getTime();
 
@@ -58,24 +129,3 @@ async function tryForXMilliseconds(functionToTry, timeLimit = 100) {
   };
   return await trier();
 }
-
-module.exports = function withDidServer(){
-  let didServerProcess;
-
-  before(async function() {
-    Object.assign(this, didServerHelpers);
-    didServerProcess = spawn('./scripts/didserver-start');
-    await tryForXMilliseconds(getDidServerIndex);
-    await expectDidServerToHaveValidKeys();
-    didClient.didServerUrl = 'http://localhost:5001/';
-  });
-
-  beforeEach(async function(){
-    await exec('./scripts/didserver-db-reset');
-  });
-
-  after(function() {
-    didServerProcess.kill();
-  });
-
-};

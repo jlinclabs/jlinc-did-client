@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-
-cockroach sql \
-  --insecure \
-  --execute="DROP DATABASE IF EXISTS did;" \
-;

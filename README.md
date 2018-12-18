@@ -39,12 +39,6 @@ and you should get back something like:
 
 Copy the `encryptingPublicKey` and `encryptingPrivateKey` to your servers `config.toml`
 
-### Creating server database
-
-```
-./scripts/didserver-db-create
-```
-
 ### Manual Testing! :D
 
 ```js

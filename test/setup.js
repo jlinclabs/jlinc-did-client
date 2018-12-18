@@ -1,7 +1,5 @@
 'use strict';
 
-process.env.NODE_ENV = 'test';
-
 const { inspect } = require('util');
 const chai = require('chai');
 const chaiMatchPattern = require('chai-match-pattern');
