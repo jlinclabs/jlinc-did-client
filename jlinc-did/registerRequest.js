@@ -2,17 +2,24 @@
 
 const request = require('request-promise');
 
-module.exports = async function registerRequest() {
+module.exports = async function registerRequest(entity) {
+  if (!entity) throw new Error('entity required');
+  if (!entity.signingPublicKey) throw new Error('entity.signingPublicKey required');
+  if (!entity.signingPrivateKey) throw new Error('entity.signingPrivateKey required');
+  if (!entity.encryptingPublicKey) throw new Error('entity.encryptingPublicKey required');
+  if (!entity.encryptingPrivateKey) throw new Error('entity.encryptingPrivateKey required');
+  if (!entity.registrationSecret) throw new Error('entity.registrationSecret required');
+
   const {MasterPublicKeyError, CreateRegistrantSecretError} = this;
 
   // get the DID server's public key unless we've already cached it
   let serverPublicKey;
-  let url = this.didServerUrl;
+  const url = this.didServerUrl;
   if (process.env.serverPublicKey) {
     serverPublicKey = process.env.serverPublicKey;
   } else {
     try {
-      let response = await request.get({url});
+      const response = await request.get({url});
       serverPublicKey = JSON.parse(response).masterPublicKey;
       process.env.serverPublicKey = serverPublicKey;
     } catch (e) {
@@ -20,9 +27,7 @@ module.exports = async function registerRequest() {
     }
   }
 
-  // create the DID registration request
-  let entity = this.createEntity();
-  let did = this.createDID(entity);
+  const did = this.createDID(entity);
 
   try {
     did.secret = this.createRegistrantSecret(entity, serverPublicKey);
@@ -31,7 +36,7 @@ module.exports = async function registerRequest() {
   }
 
   try {
-    let options = {
+    const options = {
       method: 'POST',
       uri: `${url}register`,
       body: did,
@@ -40,7 +45,7 @@ module.exports = async function registerRequest() {
       simple: false
     };
 
-    let response = await request(options);
+    const response = await request(options);
     if (response.statusCode === 200) {
       return {success: true, status: response.statusCode, entity, confirmable: response.body};
     } else {

@@ -14,7 +14,8 @@ const didServerHelpers = {
   didClient,
 
   async registerDid() {
-    let response = await didClient.registerRequest();
+    const newEntity = didClient.createEntity();
+    let response = await didClient.registerRequest(newEntity);
     if (response.error) throw new Error(`error in registerRequest: ${response.error}`);
     const { entity, confirmable } = response;
     response = await didClient.registerConfirm(entity, confirmable);

@@ -6,7 +6,8 @@ describe('registering a new DID', function() {
   withDidServer();
 
   it('request and confirm a new DID', async function() {
-    const response = await this.didClient.registerRequest();
+    const newEntity = await this.didClient.createEntity();
+    const response = await this.didClient.registerRequest(newEntity);
     expect(response.status).to.equal(200);
     const { entity, confirmable } = response;
     expect(entity).to.be.aDidEntity();
@@ -20,5 +21,4 @@ describe('registering a new DID', function() {
       id: confirmable.id,
     });
   });
-
 });
