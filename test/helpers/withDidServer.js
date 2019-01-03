@@ -60,7 +60,7 @@ const didServer = {
       shell: true,
       cwd: this.path,
       silent: true,
-      // stdio: 'inherit',
+      stdio: 'ignore',
       env: {
         DATABASE_URL: `postgres://root@localhost:26257/${this.db}?sslmode=disable`,
         URL: this.url,
