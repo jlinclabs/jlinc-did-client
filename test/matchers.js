@@ -91,7 +91,7 @@ chai.Assertion.addMethod('aRegistrationSecret', function(){
   expect(b64.decode(this._obj)).to.have.lengthOf(48);
 });
 
-chai.Assertion.addMethod('aValidJlincDidId', function () {
+chai.Assertion.addMethod('aDid', function () {
   expect(this._obj).to.match(/^did:jlinc:.*$/);
 });
 
@@ -109,20 +109,29 @@ chai.Assertion.addMethod('aCryptoSignKeypair', function(){
   ).to.equal(itemToSign);
 });
 
-chai.Assertion.addMethod('aDidEntity', function(){
+chai.Assertion.addMethod('anEntity', function(){
   const entity = this._obj;
   expect(entity).to.be.an('object');
-  expect(entity).to.have.all.keys('signingPublicKey', 'signingPrivateKey', 'encryptingPublicKey', 'encryptingPrivateKey', 'registrationSecret');
+  expect(entity).to.include.keys(
+    'did',
+    'registrationSecret',
+    'signingPublicKey',
+    'signingPrivateKey',
+    'encryptingPublicKey',
+    'encryptingPrivateKey',
+  );
+  expect(entity.did).to.be.aDid();
+  expect(entity.registrationSecret).to.be.aRegistrationSecret();
   expect(entity.signingPublicKey).to.be.aPublicKey();
   expect(entity.signingPrivateKey).to.be.aPrivateKey();
   expect(entity.encryptingPublicKey).to.be.anEncryptingPublicKey();
   expect(entity.encryptingPrivateKey).to.be.anEncryptingPrivateKey();
-  expect(entity.registrationSecret).to.be.aRegistrationSecret();
   expect({
     signingPublicKey: entity.signingPublicKey,
     signingPrivateKey: entity.signingPrivateKey,
   }).to.be.aCryptoSignKeypair();
 });
+
 
 chai.Assertion.addMethod('anISODateString', function(){
   expect(this._obj).to.match(/^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d.\d\d\dZ$/);
@@ -137,6 +146,16 @@ _.mixin({
 
   isDatetimeInISOFormat(target){
     expect(target).to.be.aDatetimeInISOFormat();
+    return true;
+  },
+
+  isDid(target){
+    expect(target).to.be.aDid();
+    return true;
+  },
+
+  isEntity(target){
+    expect(target).to.be.anEntity();
     return true;
   },
 

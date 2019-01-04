@@ -3,48 +3,51 @@
 const sodium = require('sodium').api;
 const b64 = require('urlsafe-base64');
 const jwt = require('jsonwebtoken');
-const request = require('request-promise');
 
-module.exports = async function registerConfirm(entity, confirmable) {
-  const url = this.didServerUrl;
-  const didID = confirmable.id;
-  const challenge = confirmable.challenge;
-  let signature;
-  let token;
+module.exports = async function registerConfirm({ did, registrationSecret, challenge, keys }) {
+
+  if (!did) throw new Error('did is required');
+  if (!registrationSecret) throw new Error('registrationSecret is required');
+  if (!challenge) throw new Error('challenge is required');
+  if (!keys) throw new Error('keys is required');
 
   // sign the challenge
+  let signature;
   try {
-    let hash = sodium.crypto_hash_sha256(Buffer.from(challenge));
-    signature = sodium.crypto_sign_detached(hash, b64.decode(entity.signingPrivateKey));
-  } catch (e) {
-    return e.message;
+    signature = sodium.crypto_sign_detached(
+      sodium.crypto_hash_sha256(Buffer.from(challenge)),
+      b64.decode(keys.signingPrivateKey),
+    );
+  }catch(error){
+    throw new Error(`failed to sign challenge: ${error}`);
   }
 
   //create the JWT
+  let token;
   try {
-    token = jwt.sign({id: didID, signature: b64.encode(signature)}, entity.registrationSecret, {algorithm: 'HS256'});
-  } catch (e) {
-    return e.message;
+    token = jwt.sign(
+      {
+        id: did,
+        signature: b64.encode(signature)
+      },
+      registrationSecret,
+      {
+        algorithm: 'HS256'
+      },
+    );
+  }catch(error){
+    throw new Error(`failed to sign json web token: ${error}`);
   }
 
-  try {
-    let options = {
-      method: 'POST',
-      uri: `${url}confirm`,
-      body: {challengeResponse: token},
-      json: true,
-      resolveWithFullResponse: true,
-      simple: false
-    };
+  await this.request({
+    method: 'post',
+    path:  '/confirm',
+    body: { challengeResponse: token },
+  });
 
-    let response = await request(options);
-    if (response.statusCode === 201) {
-      return {success: true, id: response.body.id};
-    } else {
-      return {success: false, status: response.statusCode, id: didID, error: response.body.error};
-    }
-  } catch (e) {
-    return e.message;
-  }
-
+  return {
+    ...keys,
+    did,
+    registrationSecret,
+  };
 };
