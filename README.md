@@ -70,7 +70,7 @@ entity.encryptingPrivateKey, // persist and protect this
 ### Creating keys for the server
 
 ```js
-require('.').createEntity().then(console.log)
+console.log(require('.').createKeys())
 ```
 
 and you should get back something like:
