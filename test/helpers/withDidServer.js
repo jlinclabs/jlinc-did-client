@@ -4,8 +4,12 @@ const path = require('path');
 const request = require('request-promise');
 const { spawn, execSync } = require('child_process');
 const didClient = require('../../jlinc-did');
+const PUBLIC_KEY = 'xRliWWNCToxApYwfRFf8hIUf2x7E6sn2MmIfwAJzokI';
+const PRIVATE_KEY = '8hwb4iOJ05LqzuhAi4r8sHccPh_HgkOd_ugbAGhZE74';
 
 const didServerHelpers = {
+  SERVER_PUBLIC_KEY: PUBLIC_KEY,
+  SERVER_PRIVATE_KEY: PRIVATE_KEY,
 
   async getDidServerIndex() {
     return await didServer.request('get', '/');
@@ -13,26 +17,22 @@ const didServerHelpers = {
 
   didClient,
 
-  async registerDid() {
-    let response = await didClient.registerRequest();
-    if (response.error) throw new Error(`error in registerRequest: ${response.error}`);
-    const { entity, confirmable } = response;
-    response = await didClient.registerConfirm(entity, confirmable);
-    if (response.error) throw new Error(`error in registerConfirm: ${response.error}`);
-    return { didId: confirmable.id, entity };
-  },
 
-  async supersedeDid({didId, registrationSecret}) {
-    let response = await didClient.supersedeRequest(didId);
-    if (response.error) throw new Error(`error in supersedeRequest: ${error}`);
-    const { entity, confirmable } = response;
-    response = await didClient.supersedeConfirm(entity, confirmable, registrationSecret);
-    if (response.error) throw new Error(`error in supersedeConfirm: ${error}`);
-    return {
-      latestDidId: confirmable.id,
-      latestEntity: entity,
-    };
-  },
+  // async supersedeDid(did) {
+  //   const entity = this.didClient.createEntity();
+  //   return await this.didClient.supersede(did, entity);
+  // },
+
+  //   let response = await didClient.supersedeRequest(didId);
+  //   if (response.error) throw new Error(`error in supersedeRequest: ${error}`);
+  //   const { entity, confirmable } = response;
+  //   response = await didClient.supersedeConfirm(entity, confirmable, registrationSecret);
+  //   if (response.error) throw new Error(`error in supersedeConfirm: ${error}`);
+  //   return {
+  //     latestDidId: confirmable.id,
+  //     latestEntity: entity,
+  //   };
+  // },
 };
 
 module.exports = function withDidServer(){
@@ -65,8 +65,8 @@ const didServer = {
         DATABASE_URL: `postgres://root@localhost:26257/${this.db}?sslmode=disable`,
         URL: this.url,
         PORT: `${this.port}`,
-        PUBLIC_KEY:  'xRliWWNCToxApYwfRFf8hIUf2x7E6sn2MmIfwAJzokI',
-        PRIVATE_KEY: '8hwb4iOJ05LqzuhAi4r8sHccPh_HgkOd_ugbAGhZE74',
+        PUBLIC_KEY,
+        PRIVATE_KEY,
         CONTEXT: 'https://w3id.org/did/v1',
       },
     };

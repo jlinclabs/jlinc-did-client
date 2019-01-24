@@ -8,14 +8,69 @@ Specifically: https://did-spec.jlinc.org/#6-operations
 
 ## Nomenclature
 
+### entity
+
+An entity looks like this:
+
+```js
+{
+  did,
+  registrationSecret,
+  signingPublicKey,
+  signingPrivateKey,
+  encryptingPublicKey,
+  encryptingPrivateKey,
+}
+```
+
+### did
+
+`"did:jlinc:xxxxxxxxxxxxxxxxxxxxxxxxx`
+
+### didDocument
+
+```js
+const didDocument = {
+  '@context': didClient.contextUrl,
+  id: entity.did,
+  created: '2019-01-08T21:12:36.505Z',
+  publicKey: [
+    {
+      id: `${entity.did}#signing`,
+      type: 'ed25519',
+      owner: entity.did,
+      publicKeyBase64: entity.signingPublicKey
+    },
+    {
+      id: `${entity.did}#encrypting`,
+      type: 'curve25519',
+      owner: entity.did,
+      publicKeyBase64: entity.encryptingPublicKey
+    },
+  ],
+};
+```
+
 ## Expected Usage
+
+```js
+
+const entity = await didClient.register();
+
+entity.did // your public did string
+entity.registrationSecret,   // persist and protect this (you need this to supersede this did)
+entity.signingPublicKey,     // persist this as is
+entity.signingPrivateKey,    // persist and protect this
+entity.encryptingPublicKey,  // persist this
+entity.encryptingPrivateKey, // persist and protect this
+```
 
 ## Development
 
 ### Creating keys for the server
 
 ```js
-require('.').createEntity().then(console.log)
+console.log(require('.').createKeys())
 ```
 
 and you should get back something like:

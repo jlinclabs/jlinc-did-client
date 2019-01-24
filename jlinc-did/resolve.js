@@ -1,50 +1,22 @@
 'use strict';
 
-const request = require('request-promise');
+module.exports = async function resolve({ did, root = false }) {
+  const { ResourceNotFoundError, DIDNotFoundError } = this;
 
-module.exports = async function resolve(id, root = false, redirect = false) {
-  const url = this.didServerUrl;
+  if (!did) throw new Error(`did is required`);
+  if (typeof did !== 'string') throw new Error(`did must of type string`);
 
-  //boolean root, if true, indicates a request to get the most current ID
-  //in the same root chain as the requested ID
-  if (root) {
-    try {
-      let options = {
-        method: 'Get',
-        uri: `${url}root/${id}`,
-        json: true,
-        resolveWithFullResponse: true,
-        simple: false
-      };
-
-      let response = await request(options);
-      if (response.statusCode === 200) {
-        return {success: true, resolved: response.body};
-      } else {
-        return {success: false, status: response.statusCode, id, error: response.body.error};
-      }
-    } catch (e) {
-      return e.message;
+  try{
+    const { did: didDocument } = await this.request({
+      method: 'get',
+      path: root ? `/root/${did}` : `/${did}`,
+      followRedirect: true,
+    });
+    return didDocument;
+  }catch(error){
+    if (error instanceof ResourceNotFoundError){
+      throw new DIDNotFoundError('did not found');
     }
-  } else {
-    try {
-      let options = {
-        method: 'Get',
-        uri: `${url}${id}`,
-        json: true,
-        resolveWithFullResponse: true,
-        simple: false,
-        followRedirect: redirect,
-      };
-
-      let response = await request(options);
-      if (response.statusCode === 200) {
-        return {success: true, resolved: response.body};
-      } else {
-        return {success: false, status: response.statusCode, id, error: response.body.error};
-      }
-    } catch (e) {
-      return e.message;
-    }
+    throw error;
   }
 };

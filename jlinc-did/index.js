@@ -1,6 +1,6 @@
 'use strict';
 
-class CustomError extends Error {
+class JlincDidError extends Error {
   constructor(message){
     super(message);
     this.name = this.constructor.name;
@@ -11,17 +11,23 @@ class CustomError extends Error {
 module.exports =  {
   version: require('../package.json').version,
 
+  now: require('./now'),
+
   contextUrl: 'https://w3id.org/did/v1',
   didServerUrl: 'http://localhost:5001/',
   //didServerUrl: 'https://testnet.did.jlinc.org/',
 
   // Custom Errors
-  MasterPublicKeyError: class MasterPublicKeyError extends CustomError {},
-  CreateRegistrantSecretError: class CreateRegistrantSecretError extends CustomError {},
+  JlincDidError,
+  RequestError: class RequestError extends JlincDidError {},
+  ResourceNotFoundError: class ResourceNotFoundError extends JlincDidError {},
+  // CreateRegistrantSecretError: class CreateRegistrantSecretError extends JlincDidError {},
+  ResolutionError: class ResolutionError extends JlincDidError {},
+  DIDNotFoundError: class DIDNotFoundError extends JlincDidError {},
+  EntityRegistrationError: class EntityRegistrationError extends JlincDidError {},
 
-  // resolving DIDs
-  resolve: require('./resolve'),
-  history: require('./history'),
+  request: require('./request'),
+  getServerPublicKey: require('./getServerPublicKey'),
 
   // registering a new entity
   registerRequest: require('./registerRequest'),
@@ -30,16 +36,19 @@ module.exports =  {
   registerWithAgentKey: require('./registerWithAgentKey'),
 
   // registration
-  getMasterPublicKey: require('./getMasterPublicKey'),
-  createEntity: require('./createEntity'),
-  createDID: require('./createDID'),
+  createKeys: require('./createKeys'),
+  createDidDocument: require('./createDidDocument'),
   createNonce: require('./createNonce'),
-  signDID: require('./signDID'),
-  createRegistrantSecret: require('./createRegistrantSecret'),
+  // createRegistrantSecret: require('./createRegistrantSecret'),
+
+  // resolving DIDs
+  resolve: require('./resolve'),
+  history: require('./history'),
 
   // supersede
   supersedeRequest: require('./supersedeRequest'),
   supersedeConfirm: require('./supersedeConfirm'),
+  supersede: require('./supersede'),
 
   // revoke
   revokeDID: require('./revokeDID'),

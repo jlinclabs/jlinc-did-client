@@ -1,63 +1,53 @@
 'use strict';
 
-const request = require('request-promise');
+const sodium = require('sodium').api;
+const b64 = require('urlsafe-base64');
 
-module.exports = async function registerRequest() {
-  const {MasterPublicKeyError, CreateRegistrantSecretError} = this;
+module.exports = async function registerRequest({ keys }) {
+  if (!keys) throw new Error('keys is required');
+  if (!keys.encryptingPrivateKey) throw new Error(`keys.encryptingPrivateKey is required`);
 
-  // get the DID server's public key unless we've already cached it
-  let serverPublicKey;
-  let url = this.didServerUrl;
-  if (process.env.serverPublicKey) {
-    serverPublicKey = process.env.serverPublicKey;
-  } else {
-    try {
-      let response = await request.get({url});
-      serverPublicKey = JSON.parse(response).masterPublicKey;
-      process.env.serverPublicKey = serverPublicKey;
-    } catch (e) {
-      throw new MasterPublicKeyError(e.message);
-    }
-  }
+  const { didDocument, signature } = this.createDidDocument({ keys });
 
-  // create the DID registration request
-  let entity = this.createEntity();
-  let did = this.createDID(entity);
+  const serverPublicKey = await this.getServerPublicKey();
+  const registrationSecret = createRegistrationSecret();
 
-  try {
-    did.secret = this.createRegistrantSecret(entity, serverPublicKey);
-  } catch (e) {
-    throw new CreateRegistrantSecretError(e.message);
-  }
+  const { id: did, challenge } = await this.request({
+    method: 'post',
+    path: '/register',
+    body: {
+      did: didDocument,
+      signature,
+      secret: await createRegistrantSecret({
+        serverPublicKey,
+        registrationSecret,
+        encryptingPrivateKey: keys.encryptingPrivateKey,
+      }),
+    },
+  });
 
-  try {
-    let options = {
-      method: 'POST',
-      uri: `${url}register`,
-      body: did,
-      json: true,
-      resolveWithFullResponse: true,
-      simple: false
-    };
+  return { did, registrationSecret, challenge };
+};
 
-    let response = await request(options);
-    if (response.statusCode === 200) {
-      return {success: true, status: response.statusCode, entity, confirmable: response.body};
-    } else {
-      return {success: false, status: response.statusCode, entity, error: response.body.error};
-    }
-  } catch (e) {
-    return e.message;
-  }
+function createRegistrationSecret(){
+  const buffer = Buffer.alloc(32);
+  sodium.randombytes(buffer);
+  return buffer.toString('hex');
+}
 
-  /*
-  **********************
-  On success, the entity and confirmable values MUST be captured and persisted to be available
-  for further operations, including formulating a POST to /confirm.
+function createRegistrantSecret({ serverPublicKey, registrationSecret, encryptingPrivateKey }) {
+  const nonce = Buffer.alloc(sodium.crypto_box_NONCEBYTES);
+  sodium.randombytes(nonce);
 
-  The entity.signingPrivateKey, entity.encryptingPrivateKey and entity.registrationSecret values
-  SHOULD be carefully protected for security.
-  **********************
-  */
+  const cyphertext = sodium.crypto_box(
+    Buffer.from(registrationSecret),
+    nonce,
+    b64.decode(serverPublicKey),
+    b64.decode(encryptingPrivateKey)
+  );
 
+  return {
+    cyphertext: b64.encode(cyphertext),
+    nonce: b64.encode(nonce),
+  };
 };

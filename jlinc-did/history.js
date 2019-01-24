@@ -1,26 +1,20 @@
 'use strict';
 
-const request = require('request-promise');
+module.exports = async function history({ did }) {
+  const { ResourceNotFoundError, DIDNotFoundError } = this;
 
-module.exports = async function history(id) {
-  const url = this.didServerUrl;
+  if (!did) throw new Error('did is required');
 
-  try {
-    let options = {
-      method: 'Get',
-      uri: `${url}history/${id}`,
-      json: true,
-      resolveWithFullResponse: true,
-      simple: false
-    };
-
-    let response = await request(options);
-    if (response.statusCode === 200) {
-      return {success: true, history: response.body.history};
-    } else {
-      return {success: false, status: response.statusCode, id, error: response.body.error};
+  try{
+    const { history } = await this.request({
+      method: 'get',
+      path: `/history/${did}`,
+    });
+    return history;
+  }catch(error){
+    if (error instanceof ResourceNotFoundError){
+      throw new DIDNotFoundError('did not found');
     }
-  } catch (e) {
-    return e.message;
+    throw error;
   }
 };
