@@ -32,6 +32,7 @@ module.exports =  {
   registerRequest: require('./registerRequest'),
   registerConfirm: require('./registerConfirm'),
   register: require('./register'),
+  registerWithAgentKey: require('./registerWithAgentKey'),
 
   // registration
   createKeys: require('./createKeys'),
