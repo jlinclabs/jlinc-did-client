@@ -26,6 +26,7 @@ module.exports =  {
   // registering a new entity
   registerRequest: require('./registerRequest'),
   registerConfirm: require('./registerConfirm'),
+  register: require('./register'),
   registerWithAgentKey: require('./registerWithAgentKey'),
 
   // registration
