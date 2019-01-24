@@ -12,7 +12,8 @@ module.exports =  {
   version: require('../package.json').version,
 
   contextUrl: 'https://w3id.org/did/v1',
-  // didServerUrl: 'http://localhost:5001/',
+  didServerUrl: 'http://localhost:5001/',
+  //didServerUrl: 'https://testnet.did.jlinc.org/',
 
   // Custom Errors
   MasterPublicKeyError: class MasterPublicKeyError extends CustomError {},
@@ -25,6 +26,7 @@ module.exports =  {
   // registering a new entity
   registerRequest: require('./registerRequest'),
   registerConfirm: require('./registerConfirm'),
+  registerWithAgentKey: require('./registerWithAgentKey'),
 
   // registration
   getMasterPublicKey: require('./getMasterPublicKey'),
