@@ -60,9 +60,11 @@ const didServer = {
       shell: true,
       cwd: this.path,
       silent: true,
+      // stdio: 'inherit',
       stdio: 'ignore',
       env: {
-        DATABASE_URL: `postgres://root@localhost:26257/${this.db}?sslmode=disable`,
+        ...process.env,
+        DATABASE_URL: `postgres://localhost/${this.db}?sslmode=disable`,
         URL: this.url,
         PORT: `${this.port}`,
         PUBLIC_KEY,
@@ -72,8 +74,12 @@ const didServer = {
     };
   },
 
+  execScript(script){
+    return execSync(`${this.path}/scripts/${script}`, this.execOptions());
+  },
+
   async setup(){
-    execSync(`${this.path}/scripts/db-reset`, this.execOptions());
+    this.execScript('db-setup');
   },
 
   async start(){
@@ -84,10 +90,7 @@ const didServer = {
   },
 
   async reset(){
-    // execSync(`${this.path}/scripts/db-reset`, this.execOptions());
-    execSync(`
-      cockroach sql --insecure --execute="SET database = ${this.db}; TRUNCATE didstore"
-    `);
+    this.execScript('db-reset');
   },
 
   async stop(){

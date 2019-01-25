@@ -4,6 +4,7 @@ const URL = require('url');
 const request = require('request-promise');
 
 module.exports = async function({ method, path, body, followRedirect }){
+  const stack = (new Error).stack;
   const { RequestError, ResourceNotFoundError } = this;
 
   if (!method) throw new Error(`method is required`);
@@ -37,7 +38,9 @@ module.exports = async function({ method, path, body, followRedirect }){
   ) {
     const errorMessage = (response.body && response.body.error) ||
       `unknown request error statusCode: ${response.statusCode}`;
-    throw new RequestError(`RequestError: ${errorMessage}`);
+    const error = new RequestError(`RequestError: "${errorMessage}"`);
+    error.stack += stack;
+    throw error;
   }
 
   return response.body;

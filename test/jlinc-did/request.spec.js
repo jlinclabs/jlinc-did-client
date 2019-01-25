@@ -111,7 +111,7 @@ describe('jlincDid.request', function() {
       });
       await expect(
         didClient.request({ method: 'get', path: '/' })
-      ).to.be.rejectedWith(didClient.RequestError, 'RequestError: there be dragons arrrrr');
+      ).to.be.rejectedWith(didClient.RequestError, 'RequestError: "there be dragons arrrrr"');
 
       request.get.resolves({
         statusCode: 400,
@@ -119,7 +119,7 @@ describe('jlincDid.request', function() {
       });
       await expect(
         didClient.request({ method: 'get', path: '/' })
-      ).to.be.rejectedWith(didClient.RequestError, 'RequestError: unknown request error statusCode: 400');
+      ).to.be.rejectedWith(didClient.RequestError, 'RequestError: "unknown request error statusCode: 400"');
 
     });
   });
