@@ -8,17 +8,19 @@ jobs:
     working_directory: ~/jlinc-did-client
 
     docker:
-      - image: circleci/node:8.9.4
-
+      - image: circleci/node:8.11.3
+        environment:
+        - DATABASE_HOST: postgresql://root@127.0.0.1
+        - PGHOST: 127.0.0.1
+        - PGUSER: root
+      - image: circleci/postgres:9.6-alpine
+        environment:
+        - POSTGRES_USER: root
     steps:
+      - run: sudo apt-get install -y postgresql-client
+
       - checkout
       - run: git submodule update --init
-      - run: wget -qO- https://binaries.cockroachdb.com/cockroach-v2.1.2.linux-amd64.tgz | tar  xvz
-      - run: sudo cp -i cockroach-v2.1.2.linux-amd64/cockroach /usr/local/bin
-      - run:
-          name: start cockroach
-          command: cockroach start --insecure --listen-addr=localhost
-          background: true
 
       # Download and cache dependencies
       - restore_cache:
