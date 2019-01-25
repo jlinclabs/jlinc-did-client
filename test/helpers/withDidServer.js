@@ -6,7 +6,7 @@ const { spawn, execSync } = require('child_process');
 const didClient = require('../../jlinc-did');
 const PUBLIC_KEY = 'xRliWWNCToxApYwfRFf8hIUf2x7E6sn2MmIfwAJzokI';
 const PRIVATE_KEY = '8hwb4iOJ05LqzuhAi4r8sHccPh_HgkOd_ugbAGhZE74';
-
+const DATABASE_HOST = process.env.DATABASE_HOST || 'postgres://localhost';
 const didServerHelpers = {
   SERVER_PUBLIC_KEY: PUBLIC_KEY,
   SERVER_PRIVATE_KEY: PRIVATE_KEY,
@@ -60,11 +60,10 @@ const didServer = {
       shell: true,
       cwd: this.path,
       silent: true,
-      // stdio: 'inherit',
-      stdio: 'ignore',
+      stdio: ['ignore', 'ignore', 'inherit'],
       env: {
         ...process.env,
-        DATABASE_URL: `postgres://localhost/${this.db}?sslmode=disable`,
+        DATABASE_URL: `${DATABASE_HOST}/${this.db}?sslmode=disable`,
         URL: this.url,
         PORT: `${this.port}`,
         PUBLIC_KEY,
