@@ -18,6 +18,7 @@ jobs:
         - POSTGRES_USER: root
     steps:
       - run: sudo apt-get clean
+      - run: sudo apt-get update
       - run: sudo apt-get install -y postgresql-client
 
       - checkout
