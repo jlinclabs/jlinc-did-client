@@ -14,7 +14,6 @@ module.exports =  {
   now: require('./now'),
 
   contextUrl: 'https://w3id.org/did/v1',
-  // didServerUrl: 'http://localhost:5001/',
 
   // Custom Errors
   JlincDidError,
@@ -32,6 +31,7 @@ module.exports =  {
   registerRequest: require('./registerRequest'),
   registerConfirm: require('./registerConfirm'),
   register: require('./register'),
+  registerWithAgentKey: require('./registerWithAgentKey'),
 
   // registration
   createKeys: require('./createKeys'),
