@@ -50,4 +50,8 @@ module.exports =  {
 
   // revoke
   revokeDID: require('./revokeDID'),
+
+  // validate keypairs
+  verifySigningKeypair: require('./verifySigningKeypair'),
+  verifyEncryptingKeypair: require('./verifyEncryptingKeypair'),
 };
