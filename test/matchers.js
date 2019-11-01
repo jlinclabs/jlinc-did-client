@@ -51,9 +51,17 @@ chai.Assertion.addMethod('aDatetimeInISOFormat', function(){
   expect(this._obj).to.equal(date.toISOString());
 });
 
-chai.Assertion.addMethod('aRecentSecondsFromEpochInteger', function(){
-  const now = Math.floor(Date.now() / 1000);
-  expect(this._obj).to.be.within(now - 1, now);
+chai.Assertion.addMethod('nowish', function(){
+  expect(this._obj).to.be.within(
+    new Date(Date.now() - 5),
+    new Date(Date.now() + 1),
+  );
+});
+
+chai.Assertion.addMethod('aNowishISOString', function(){
+  expect(this._obj).to.be.a('string');
+  expect(this._obj).to.match(/^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d.\d\d\dZ$/);
+  expect(new Date(this._obj)).to.be.nowish();
 });
 
 chai.Assertion.addMethod('aNonce', function(){
