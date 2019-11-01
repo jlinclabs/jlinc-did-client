@@ -3,7 +3,8 @@
 const b64 = require('urlsafe-base64');
 const sodium = require('sodium').api;
 
-module.exports = function createDidDocument({ keys }) {
+module.exports = function createDidDocument(options = {}) {
+  const { keys } = options;
   if (!keys) throw new Error('keys is required');
   if (!keys.signingPublicKey) throw new Error('keys.signingPublicKey is required');
   if (!keys.signingPrivateKey) throw new Error('keys.signingPrivateKey is required');
