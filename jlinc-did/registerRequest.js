@@ -12,7 +12,7 @@ module.exports = async function registerRequest({ keys }) {
   const serverPublicKey = await this.getServerPublicKey();
   const registrationSecret = createRegistrationSecret();
 
-  const { id: did, challenge } = await this.request({
+  const response = await this.request({
     method: 'post',
     path: '/register',
     body: {
@@ -25,6 +25,10 @@ module.exports = async function registerRequest({ keys }) {
       }),
     },
   });
+
+  if (!response.id) throw new Error(`expected id from did server`);
+  if (!response.challenge) throw new Error(`expected challenge from did server`);
+  const { id: did, challenge } = response;
 
   return { did, registrationSecret, challenge };
 };

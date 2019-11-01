@@ -38,7 +38,7 @@ describe('jlincDid.resolve', function() {
     it('should return the did document', async function(){
       const { didClient } = this;
       await expect(
-        didClient.resolve({ did: 'did:jlinc:nobodysuspectsthespanishinquizision' })
+        didClient.resolve({ did: 'did:jlinc:SHDDlR-jr4JYa7FqFNaRd495p1Sm3eir2jVVVRf09j0' })
       ).to.be.rejectedWith(didClient.DIDNotFoundError, 'did not found');
     });
   });

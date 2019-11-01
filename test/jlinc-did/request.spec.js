@@ -119,7 +119,7 @@ describe('jlincDid.request', function() {
       });
       await expect(
         didClient.request({ method: 'get', path: '/' })
-      ).to.be.rejectedWith(didClient.RequestError, 'RequestError: "unknown request error statusCode: 400"');
+      ).to.be.rejectedWith(didClient.RequestError, 'RequestError: "statusCode=400 method=get path=/"');
 
     });
   });
@@ -131,7 +131,7 @@ describe('jlincDid.request', function() {
       request.get.resolves({ statusCode: 404 });
       await expect(
         didClient.request({ method: 'get', path: '/' })
-      ).to.be.rejectedWith(didClient.ResourceNotFoundErro, 'request not found');
+      ).to.be.rejectedWith(didClient.ResourceNotFoundErro, 'Resource Not Found: method=get path=/');
 
     });
   });

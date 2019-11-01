@@ -39,11 +39,19 @@ module.exports = async function registerConfirm({ did, registrationSecret, chall
     throw new Error(`failed to sign json web token: ${error}`);
   }
 
-  await this.request({
-    method: 'post',
-    path:  '/confirm',
-    body: { challengeResponse: token },
-  });
+  try{
+    await this.request({
+      method: 'post',
+      path:  '/confirm',
+      body: { challengeResponse: token },
+    });
+  }catch(error){
+    if (error.message.includes('JWT-signature is invalid'))
+      throw new Error(`invalid registrationSecret`);
+    if (error.message.includes('signature does not verify'))
+      throw new Error(`invalid keys or challenge`);
+    throw error;
+  }
 
   return {
     ...keys,

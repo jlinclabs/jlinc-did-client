@@ -28,7 +28,7 @@ module.exports = async function({ method, path, body, followRedirect }){
   const response = await request[method](requestOptions);
 
   if (response.statusCode === 404){
-    throw new ResourceNotFoundError('request not found');
+    throw new ResourceNotFoundError(`Resource Not Found: method=${method} path=${path}`);
   }
 
   if (
@@ -37,7 +37,7 @@ module.exports = async function({ method, path, body, followRedirect }){
     (response.body && response.body.error)
   ) {
     const errorMessage = (response.body && response.body.error) ||
-      `unknown request error statusCode: ${response.statusCode}`;
+      `statusCode=${response.statusCode} method=${method} path=${path}`;
     const error = new RequestError(`RequestError: "${errorMessage}"`);
     error.stack += stack;
     throw error;

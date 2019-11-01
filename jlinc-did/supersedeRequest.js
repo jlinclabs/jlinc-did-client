@@ -16,5 +16,8 @@ module.exports = async function supersedeRequest({ did, keys }) {
     },
   });
 
+  if (!newDid) throw new Error(`expected id from did server`);
+  if (!challenge) throw new Error(`expected challenge from did server`);
+
   return { newDid, challenge };
 };

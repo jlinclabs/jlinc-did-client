@@ -6,9 +6,11 @@ const jwt = require('jsonwebtoken');
 
 module.exports = async function supersedeConfirm({ entity, keys, newDid, challenge }) {
   if (!entity) throw new Error('entity is required');
-  if (!keys)         throw new Error('keys is required');
-  if (!newDid)       throw new Error('newDid is required');
-  if (!challenge)    throw new Error('challenge is required');
+  if (!entity.registrationSecret) throw new Error('entity.registrationSecret is required');
+  if (!keys) throw new Error('keys is required');
+  if (!keys.signingPrivateKey) throw new Error('keys.signingPrivateKey is required');
+  if (!newDid) throw new Error('newDid is required');
+  if (!challenge) throw new Error('challenge is required');
 
   const signature = b64.encode(
     sodium.crypto_sign_detached(
