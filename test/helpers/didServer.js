@@ -7,6 +7,9 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const errorHandler = require('errorhandler');
 
+const base58BitcoinAlphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+const base58 = require('base-x')(base58BitcoinAlphabet);
+
 const findOpenPort = require('./findOpenPort');
 const didClient = require('../..');
 
@@ -53,13 +56,13 @@ didServer.post('/register', function(req, res) {
 
   const encryptingPublicKey = didDocument.publicKey
     .find(key => key.id === `${id}#encrypting`)
-    .publicKeyBase64
+    .publicKeyBase58
   ;
 
   let registrationSecret = sodium.crypto_box_open(
     b64.decode(secret.cyphertext),
     b64.decode(secret.nonce),
-    b64.decode(encryptingPublicKey),
+    base58.decode(encryptingPublicKey),
     b64.decode(PRIVATE_KEY)
   );
 
@@ -227,7 +230,7 @@ function getLatestDidDocument(id){
 function isValidSignatureOf({ didDocument, signature, signedItem }){
   const signingPublicKey = didDocument.publicKey
     .find(key => key.id === `${didDocument.id}#signing`)
-    .publicKeyBase64
+    .publicKeyBase58
   ;
 
   return !!sodium.crypto_sign_verify_detached(
@@ -235,7 +238,7 @@ function isValidSignatureOf({ didDocument, signature, signedItem }){
     sodium.crypto_hash_sha256(
       Buffer.from(signedItem),
     ),
-    b64.decode(signingPublicKey)
+    base58.decode(signingPublicKey)
   );
 }
 
