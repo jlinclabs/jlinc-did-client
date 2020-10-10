@@ -19,15 +19,15 @@ describe('jlincDid.resolve', function() {
         publicKey: [
           {
             id: `${entity.did}#signing`,
-            owner: entity.did,
-            publicKeyBase64: entity.signingPublicKey,
-            type: "ed25519",
+            controller: entity.did,
+            publicKeyBase58: didClient.b58.b64tob58(entity.signingPublicKey),
+            type: "Ed25519VerificationKey2018",
           },
           {
             id: `${entity.did}#encrypting`,
-            owner: entity.did,
-            publicKeyBase64: entity.encryptingPublicKey,
-            type: "curve25519",
+            controller: entity.did,
+            publicKeyBase58: didClient.b58.b64tob58(entity.encryptingPublicKey),
+            type: "X25519KeyAgreementKey2019",
           }
         ]
       });

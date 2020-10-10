@@ -9,7 +9,7 @@ describe('didClient.version', function() {
 });
 
 describe('didClient.contextUrl', function() {
-  it('should be "https://w3id.org/did/v1"', function(){
-    expect(didClient.contextUrl).to.equal('https://w3id.org/did/v1');
+  it('should be "https://www.w3.org/ns/did/v1"', function(){
+    expect(didClient.contextUrl).to.equal('https://www.w3.org/ns/did/v1');
   });
 });

@@ -43,15 +43,15 @@ describe('didClient.createDidDocument', function() {
       publicKey: [
         {
           id: `${id}#signing`,
-          type: 'ed25519',
-          owner: id,
-          publicKeyBase64: keys.signingPublicKey
+          type: 'Ed25519VerificationKey2018',
+          controller: id,
+          "publicKeyBase58": didClient.b58.b64tob58(keys.signingPublicKey)
         },
         {
           id: `${id}#encrypting`,
-          type: 'curve25519',
-          owner: id,
-          publicKeyBase64: keys.encryptingPublicKey
+          type: 'X25519KeyAgreementKey2019',
+          controller: id,
+          "publicKeyBase58": didClient.b58.b64tob58(keys.encryptingPublicKey)
         },
       ],
     });

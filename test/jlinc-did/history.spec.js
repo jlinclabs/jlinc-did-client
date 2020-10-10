@@ -22,7 +22,14 @@ describe('jlincDid.history', function() {
 
     it('should return the history of the DID', async function() {
       const { didClient, rootEntity } = this;
-
+      //       rootEntity:  {
+      //   signingPublicKey: 'hyTR_rHG5s2qY03OvQrsKxJYJVpmdjUJ4egTxtV-1pg',
+      //   signingPrivateKey: 'dBX7VsG6-7k65n4kSt5bbfRX4WZc9myJrEo27qSDS8aHJNH-scbmzapjTc69CuwrElglWmZ2NQnh6BPG1X7WmA',
+      //   encryptingPublicKey: '5iPprEnUM6Qg3LEE_7_wbTMzadheUdleDqhRBJaQkHk',
+      //   encryptingPrivateKey: 'IGnXcw__ar8SP6hsx81DYTdD9Q8TquXIZiwK5twERtA',
+      //   did: 'did:jlinc:hyTR_rHG5s2qY03OvQrsKxJYJVpmdjUJ4egTxtV-1pg',
+      //   registrationSecret: 'e0866fc30b06033e2184f2a9f8248fba5c0063fb80680e0faf1f680cfe8f10fa'
+      // }
       expect(
         await await didClient.history({ did: rootEntity.did })
       ).to.matchPattern([
@@ -35,16 +42,16 @@ describe('jlincDid.history', function() {
             publicKey: [
               {
                 id: `${rootEntity.did}#signing`,
-                owner: rootEntity.did,
-                publicKeyBase64: rootEntity.signingPublicKey,
-                type: 'ed25519',
+                controller: rootEntity.did,
+                publicKeyBase58: didClient.b58.b64tob58(rootEntity.signingPublicKey),
+                type: 'Ed25519VerificationKey2018'
               },
               {
                 id: `${rootEntity.did}#encrypting`,
-                owner: rootEntity.did,
-                publicKeyBase64: rootEntity.encryptingPublicKey,
-                type: 'curve25519',
-              }
+                controller: rootEntity.did,
+                publicKeyBase58: didClient.b58.b64tob58(rootEntity.encryptingPublicKey),
+                type: 'X25519KeyAgreementKey2019',
+              },
             ]
           }
         }
@@ -71,15 +78,15 @@ describe('jlincDid.history', function() {
             publicKey: [
               {
                 id: `${entity.did}#signing`,
-                owner: entity.did,
-                publicKeyBase64: entity.signingPublicKey,
-                type: 'ed25519'
+                controller: entity.did,
+                publicKeyBase58: didClient.b58.b64tob58(entity.signingPublicKey),
+                type: 'Ed25519VerificationKey2018'
               },
               {
                 id: `${entity.did}#encrypting`,
-                owner: entity.did,
-                publicKeyBase64: entity.encryptingPublicKey,
-                type: 'curve25519',
+                controller: entity.did,
+                publicKeyBase58: didClient.b58.b64tob58(entity.encryptingPublicKey),
+                type: 'X25519KeyAgreementKey2019',
               },
             ],
           }

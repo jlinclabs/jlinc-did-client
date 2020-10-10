@@ -20,15 +20,15 @@ describe('registerings two DIDs', function() {
       publicKey: [
         {
           id: `${bob.did}#signing`,
-          owner: bob.did,
-          publicKeyBase64: bob.signingPublicKey,
-          type: "ed25519",
+          controller: bob.did,
+          publicKeyBase58: didClient.b58.b64tob58(bob.signingPublicKey),
+          type: "Ed25519VerificationKey2018",
         },
         {
           id: `${bob.did}#encrypting`,
-          owner: bob.did,
-          publicKeyBase64: bob.encryptingPublicKey,
-          type: "curve25519",
+          controller: bob.did,
+          publicKeyBase58: didClient.b58.b64tob58(bob.encryptingPublicKey),
+          type: "X25519KeyAgreementKey2019",
         }
       ]
     });
@@ -45,15 +45,15 @@ describe('registerings two DIDs', function() {
       publicKey: [
         {
           id: `${alice.did}#signing`,
-          owner: alice.did,
-          publicKeyBase64: alice.signingPublicKey,
-          type: "ed25519",
+          controller: alice.did,
+          publicKeyBase58: didClient.b58.b64tob58(alice.signingPublicKey),
+          type: "Ed25519VerificationKey2018",
         },
         {
           id: `${alice.did}#encrypting`,
-          owner: alice.did,
-          publicKeyBase64: alice.encryptingPublicKey,
-          type: "curve25519",
+          controller: alice.did,
+          publicKeyBase58: didClient.b58.b64tob58(alice.encryptingPublicKey),
+          type: "X25519KeyAgreementKey2019",
         }
       ]
     });
