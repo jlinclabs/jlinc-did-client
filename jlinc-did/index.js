@@ -13,8 +13,8 @@ module.exports =  {
 
   now: require('./now'),
 
-  contextUrl: 'https://w3id.org/did/v1',
-  // didServerUrl: 'http://localhost:5001/',
+  contextUrl: 'https://www.w3.org/ns/did/v1',
+  didServerUrl: 'http://localhost:5001/',
 
   // Custom Errors
   JlincDidError,
@@ -27,6 +27,7 @@ module.exports =  {
 
   request: require('./request'),
   getServerPublicKey: require('./getServerPublicKey'),
+  b58: require('./b58'),
 
   // registering a new entity
   registerRequest: require('./registerRequest'),

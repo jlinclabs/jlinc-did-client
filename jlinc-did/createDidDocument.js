@@ -4,6 +4,7 @@ const b64 = require('urlsafe-base64');
 const sodium = require('sodium').api;
 
 module.exports = function createDidDocument(options = {}) {
+  const { b64tob58 } = this.b58;
   const { keys } = options;
   if (!keys) throw new Error('keys is required');
   if (!keys.signingPublicKey) throw new Error('keys.signingPublicKey is required');
@@ -20,15 +21,15 @@ module.exports = function createDidDocument(options = {}) {
     publicKey: [
       {
         id: `${id}#signing`,
-        type: 'ed25519',
-        owner: id,
-        publicKeyBase64: keys.signingPublicKey
+        type: 'Ed25519VerificationKey2018',
+        controller: id,
+        publicKeyBase58: b64tob58(keys.signingPublicKey)
       },
       {
         id: `${id}#encrypting`,
-        type: 'curve25519',
-        owner: id,
-        publicKeyBase64: keys.encryptingPublicKey
+        type: 'X25519KeyAgreementKey2019',
+        controller: id,
+        publicKeyBase58: b64tob58(keys.encryptingPublicKey)
       },
     ],
   };
