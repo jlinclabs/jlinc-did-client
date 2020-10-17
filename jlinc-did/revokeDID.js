@@ -18,7 +18,7 @@ module.exports = async function revokeDID(id, registrationSecret) {
   try {
     let options = {
       method: 'POST',
-      uri: `${url}revoke`,
+      uri: `${url}/revoke`,
       body: {revokeRequest: token},
       json: true,
       resolveWithFullResponse: true,
