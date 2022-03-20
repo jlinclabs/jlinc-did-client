@@ -43,15 +43,17 @@ A DID Document is a JSON objected sent to and received by the JLINC DID Server. 
   "publicKey": [
     {
       "id": "did:jlinc:dnhZF0DuRHgZ0wetY4S7ygsrCQMUzUZoxLxosEmbIYM#signing",
-      "type": "ed25519",
-      "owner": "did:jlinc:dnhZF0DuRHgZ0wetY4S7ygsrCQMUzUZoxLxosEmbIYM",
-      "publicKeyBase64": "dnhZF0DuRgsrCQMUzUZoxLHgZ0wetY4S7yxosEmbIYM"
+      "type": "Ed25519VerificationKey2018",
+      "controller:": "did:jlinc:dnhZF0DuRHgZ0wetY4S7ygsrCQMUzUZoxLxosEmbIYM",
+      "publicKeyBase64": "dnhZF0DuRgsrCQMUzUZoxLHgZ0wetY4S7yxosEmbIYM",
+      "publicKeyBase58": "8yTYbTktiu4FS4cda52vkBaidHt9C1KsUk4LbmFEFW42"
     },
     {
       "id": "did:jlinc:dnhZF0DuRHgZ0wetY4S7ygsrCQMUzUZoxLxosEmbIYM#encrypting",
-      "type": "curve25519",
-      "owner": "did:jlinc:dnhZF0DuRHgZ0wetY4S7ygsrCQMUzUZoxLxosEmbIYM",
-      "publicKeyBase64": "BK478lOPXtO9J2KsWq_M_opXcVqCiAYd0TWOJcATjX8"
+      "type": "X25519KeyAgreementKey2019",
+      "controller:": "did:jlinc:dnhZF0DuRHgZ0wetY4S7ygsrCQMUzUZoxLxosEmbIYM",
+      "publicKeyBase64": "BK478lOPXtO9J2KsWq_M_opXcVqCiAYd0TWOJcATjX8",
+      "publicKeyBase58:": "KGj1nUsanJzBpD1WycQi8FftxQzdk3acn4Sp9LWWD5p"
     },
   ],
 }
