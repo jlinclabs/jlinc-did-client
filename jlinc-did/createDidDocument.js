@@ -23,12 +23,14 @@ module.exports = function createDidDocument(options = {}) {
         id: `${id}#signing`,
         type: 'Ed25519VerificationKey2018',
         controller: id,
+        publicKeyBase64: keys.signingPublicKey,
         publicKeyBase58: b64tob58(keys.signingPublicKey)
       },
       {
         id: `${id}#encrypting`,
         type: 'X25519KeyAgreementKey2019',
         controller: id,
+        publicKeyBase64: keys.encryptingPublicKey,
         publicKeyBase58: b64tob58(keys.encryptingPublicKey)
       },
     ],
