@@ -14,7 +14,6 @@ module.exports =  {
   now: require('./now'),
 
   contextUrl: 'https://www.w3.org/ns/did/v1',
-  // didServerUrl: 'http://localhost:5001',
 
   // Custom Errors
   JlincDidError,
