@@ -1,6 +1,6 @@
 'use strict';
 
-const sodium = require('sodium').api;
+const sodium = require('sodium-native');
 const b64 = require('urlsafe-base64');
 
 module.exports = function verifyEncryptingKeypair({ encryptingPublicKey, encryptingPrivateKey }) {
@@ -9,31 +9,31 @@ module.exports = function verifyEncryptingKeypair({ encryptingPublicKey, encrypt
   if (typeof encryptingPublicKey !== 'string') throw new Error('encryptingPublicKey must of type string');
   if (typeof encryptingPrivateKey !== 'string') throw new Error('encryptingPrivateKey must of type string');
 
-  const senderPublicKey = b64.decode(encryptingPublicKey);
-  const senderPrivateKey = b64.decode(encryptingPrivateKey);
-  const { publicKey: recieverPublicKey, secretKey: recieverPrivateKey } = sodium.crypto_box_keypair();
-  const secret = Buffer.allocUnsafe(sodium.crypto_box_NONCEBYTES);
-  sodium.randombytes(secret);
+  const secret = Buffer.allocUnsafe(sodium.crypto_box_SECRETKEYBYTES);
+  sodium.randombytes_buf(secret);
 
   const itemToEncrypt = Buffer.from(`Drop and give me ${Math.floor(Math.random() * 10000)}`, 'utf-8');
 
-  const encryptedItem = sodium.crypto_box(
-    itemToEncrypt,
-    secret,
-    recieverPublicKey,
-    senderPrivateKey
-  );
-
-  if (!encryptedItem) throw new Error('invalid keypair: failed to encrypt');
-
-  const decryptedItem = sodium.crypto_box_open(
+  const encryptedItem = Buffer.alloc(itemToEncrypt.length + sodium.crypto_box_SEALBYTES);
+  sodium.crypto_box_seal(
     encryptedItem,
-    secret,
-    senderPublicKey,
-    recieverPrivateKey
+    itemToEncrypt,
+    b64.decode(encryptingPublicKey),
   );
 
-  if (!decryptedItem) throw new Error('invalid keypair: failed to decrypt');
+  const decryptedItem = Buffer.alloc(encryptedItem.length - sodium.crypto_box_SEALBYTES);
+  const decryptionSuccess = sodium.crypto_box_seal_open(
+    decryptedItem,
+    encryptedItem,
+    b64.decode(encryptingPublicKey),
+    b64.decode(encryptingPrivateKey),
+  );
+  if (
+    !decryptionSuccess ||
+    decryptedItem.toString() !== itemToEncrypt.toString()
+  ){
+    throw new Error('invalid keypair: failed to decrypt');
+  }
 
   return true;
 };

@@ -8,21 +8,10 @@ jobs:
     working_directory: ~/jlinc-did-client
 
     docker:
-      - image: circleci/node:12.16.3
-        environment:
-        - DATABASE_HOST: postgresql://root@127.0.0.1
-        - PGHOST: 127.0.0.1
-        - PGUSER: root
-      - image: circleci/postgres:9.6-alpine
-        environment:
-        - POSTGRES_USER: root
-    steps:
-      - run: sudo apt-get clean
-      - run: sudo apt-get update
-      - run: sudo apt-get install -y postgresql-client
+      - image: node:18.13.0
 
+    steps:
       - checkout
-      - run: git submodule update --init
 
       # Download and cache dependencies
       - restore_cache:
