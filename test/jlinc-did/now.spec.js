@@ -1,9 +1,9 @@
 'use strict';
 
-const didClient = require('../../jlinc-did');
+const { DidClient } = require('../..');
 
-describe('didClient.now', function() {
+describe('DidClient.now', function() {
   it('should return the current time in as an ISO string', function(){
-    expect(didClient.now()).to.be.aNowishISOString();
+    expect(DidClient.now()).to.be.aNowishISOString();
   });
 });

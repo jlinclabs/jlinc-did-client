@@ -60,13 +60,15 @@ A DID Document is a JSON objected sent to and received by the JLINC DID Server. 
 ## Expected Usage
 
 ```js
-const didClient = require('jlinc-did-client');
+const { DidClient } = require('jlinc-did-client');
 
 // point the client to a did server
-didClient.didServerUrl = 'http://did.jlinc.test';
+DidClient.setConfig({
+  didServerUrl: 'http://did.jlinc.test',
+})
 
 async function example(){
-  const entity = await didClient.register();
+  const entity = await DidClient.register();
   // Persist all of these values
   entity.did;
   entity.signingPublicKey;
@@ -75,12 +77,12 @@ async function example(){
   entity.encryptingPrivateKey;
   entity.registrationSecret;
 
-  const didDocument = await didClient.resolve({ did: entity.did });
+  const didDocument = await DidClient.resolve({ did: entity.did });
 
   // supersede a did
-  const entityTwo = await didClient.supersede({ entity });
+  const entityTwo = await DidClient.supersede({ entity });
 
   // get a history of the DIDs behind this did
-  const history = await didClient.history({ did: entityTwo.did });
+  const history = await DidClient.history({ did: entityTwo.did });
 }
 ```

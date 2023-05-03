@@ -7,29 +7,29 @@ describe('jlincDid.history', function() {
 
   context('whe given an invalid did', function() {
     it('should throw an error', async function() {
-      const { didClient } = this;
+      const { DidClient } = this;
       await expect(
-        didClient.history({ did: 'did:jlinc:xxxxxxxxxxxxxxxf4k31337k3yxxxxxxxxxxxxxxxx' })
-      ).to.be.rejectedWith(didClient.DIDNotFoundError);
+        DidClient.history({ did: 'did:jlinc:xxxxxxxxxxxxxxxf4k31337k3yxxxxxxxxxxxxxxxx' })
+      ).to.be.rejectedWith(DidClient.DIDNotFoundError);
     });
   });
 
   context('with a valid DID id', function(){
     beforeEach(async function(){
-      const rootEntity = await this.didClient.register();
+      const rootEntity = await this.DidClient.register();
       Object.assign(this, { rootEntity });
     });
 
     it('should return the history of the DID', async function() {
-      const { didClient, rootEntity } = this;
+      const { DidClient, rootEntity } = this;
 
       expect(
-        await await didClient.history({ did: rootEntity.did })
+        await await DidClient.history({ did: rootEntity.did })
       ).to.matchPattern([
         {
           valid: _.isString, //"2019-01-08T18:03:41Z"
           did: {
-            '@context': didClient.contextUrl,
+            '@context': DidClient.getConfig().contextUrl,
             created: _.isString, //"2019-01-08T18:03:41.762Z"
             id: rootEntity.did,
             publicKey: [
@@ -53,19 +53,19 @@ describe('jlincDid.history', function() {
       const entities = [ rootEntity ];
       for(let n = 4; n !== 0; n--){
         entities.unshift(
-          await this.didClient.supersede({ entity: entities[0] })
+          await this.DidClient.supersede({ entity: entities[0] })
         );
       }
       const latestEntity = entities[0];
 
       expect(
-        await didClient.history({ did: entities[0].did })
+        await DidClient.history({ did: entities[0].did })
       ).to.matchPattern(
         entities.map(entity => ({
           superseded: entity === latestEntity ? undefined : _.isString, // TODO _.isDateString
           valid: entity === latestEntity ? _.isString : undefined, // TODO _.isDateString
           did: {
-            '@context': didClient.contextUrl,
+            '@context': DidClient.getConfig().contextUrl,
             created: _.isString,
             id: entity.did,
             publicKey: [
