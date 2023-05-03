@@ -10,6 +10,13 @@ module.exports = async function({ method, path, body, followRedirect }){
   if (!method) throw new Error(`method is required`);
   if (!path) throw new Error(`path is required`);
 
+  // Handle legacy configuration of didServerUrl
+  if (!this.getConfig().didServerUrl && this.didServerUrl)
+    this.setConfig({
+      didServerUrl: this.didServerUrl,
+    });
+  // End legacy block
+
   if (!this.getConfig().didServerUrl) throw new Error(`You must set didServerUrl via setConfig()`);
   const url = URL.resolve(this.getConfig().didServerUrl, URL.resolve('/', path));
 
