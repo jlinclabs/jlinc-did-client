@@ -1,7 +1,7 @@
 'use strict';
 
 const b64 = require('urlsafe-base64');
-const sodium = require('sodium').api;
+const sodium = require('sodium-native');
 
 const { DidClient } = require('../..');
 
@@ -56,12 +56,17 @@ describe('DidClient.createDidDocument', function() {
       ],
     });
 
+    let hash = Buffer.alloc(sodium.crypto_hash_sha256_BYTES);
+
+    sodium.crypto_hash_sha256(
+      hash,
+      Buffer.from(`${result.didDocument.id}.${result.didDocument.created}`),
+    );
+
     expect(
       sodium.crypto_sign_verify_detached(
         b64.decode(result.signature),
-        sodium.crypto_hash_sha256(
-          Buffer.from(`${result.didDocument.id}.${result.didDocument.created}`),
-        ),
+        hash,
         b64.decode(keys.signingPublicKey)
       )
     ).to.be.true;

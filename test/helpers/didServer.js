@@ -1,6 +1,6 @@
 'use strict';
 
-const sodium = require('sodium').api;
+const sodium = require('sodium-native');
 const b64 = require('urlsafe-base64');
 const jsonwebtoken = require('jsonwebtoken');
 const bodyParser = require('body-parser');
@@ -56,8 +56,11 @@ didServer.post('/register', function(req, res) {
     .publicKeyBase64
   ;
 
-  let registrationSecret = sodium.crypto_box_open(
-    b64.decode(secret.cyphertext),
+  const decodedCypherText = b64.decode(secret.cyphertext);
+  let registrationSecret = Buffer.alloc(decodedCypherText.length - sodium.crypto_box_MACBYTES);
+  sodium.crypto_box_open_easy(
+    registrationSecret,
+    decodedCypherText,
     b64.decode(secret.nonce),
     b64.decode(encryptingPublicKey),
     b64.decode(PRIVATE_KEY)
@@ -230,11 +233,14 @@ function isValidSignatureOf({ didDocument, signature, signedItem }){
     .publicKeyBase64
   ;
 
+  const hash = Buffer.alloc(sodium.crypto_hash_sha256_BYTES);
+  sodium.crypto_hash_sha256(
+    hash,
+    Buffer.from(signedItem),
+  );
   return !!sodium.crypto_sign_verify_detached(
     b64.decode(signature),
-    sodium.crypto_hash_sha256(
-      Buffer.from(signedItem),
-    ),
+    hash,
     b64.decode(signingPublicKey)
   );
 }

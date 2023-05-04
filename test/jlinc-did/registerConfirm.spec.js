@@ -1,8 +1,9 @@
 'use strict';
 
-const sodium = require('sodium').api;
-const b64 = require('urlsafe-base64');
+const sodium = require('sodium-native');
 const jsonwebtoken = require('jsonwebtoken');
+
+const verifySignedHash = require('../../jlinc-did/verifySignedHash');
 
 const withDidServer = require('../helpers/withDidServer');
 const withSinon = require('../helpers/withSinon');
@@ -85,10 +86,10 @@ describe('jlincDid.registerConfirm', function() {
       expect(decodedJwt.signature).to.be.a('string');
       expect(decodedJwt.signature).to.have.lengthOf(86);
       expect(
-        sodium.crypto_sign_verify_detached(
-          b64.decode(decodedJwt.signature),
-          sodium.crypto_hash_sha256(Buffer.from(challenge)),
-          b64.decode(keys.signingPublicKey)
+        verifySignedHash(
+          decodedJwt.signature,
+          challenge,
+          keys.signingPublicKey
         )
       ).to.be.true;
     });
@@ -146,6 +147,6 @@ describe('jlincDid.registerConfirm', function() {
 
 function createRegistrationSecret(){
   const buffer = Buffer.alloc(32);
-  sodium.randombytes(buffer);
+  sodium.randombytes_buf(buffer);
   return buffer.toString('hex');
 }
