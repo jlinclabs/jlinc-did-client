@@ -10,8 +10,15 @@ module.exports = async function({ method, path, body, followRedirect }){
   if (!method) throw new Error(`method is required`);
   if (!path) throw new Error(`path is required`);
 
-  if (!this.didServerUrl) throw new Error(`jlincDidClient.didServerUrl must be set`);
-  const url = URL.resolve(this.didServerUrl, URL.resolve('/', path));
+  // Handle legacy configuration of didServerUrl
+  if (!this.getConfig().didServerUrl && this.didServerUrl)
+    this.setConfig({
+      didServerUrl: this.didServerUrl,
+    });
+  // End legacy block
+
+  if (!this.getConfig().didServerUrl) throw new Error(`You must set didServerUrl via setConfig()`);
+  const url = URL.resolve(this.getConfig().didServerUrl, URL.resolve('/', path));
 
   if (!(method in request)) throw new Error(`method is invalid`);
 

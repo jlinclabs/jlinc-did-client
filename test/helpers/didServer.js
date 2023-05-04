@@ -8,7 +8,7 @@ const express = require('express');
 const errorHandler = require('errorhandler');
 
 const findOpenPort = require('./findOpenPort');
-const didClient = require('../..');
+const { DidClient } = require('../..');
 
 const PUBLIC_KEY = 'xRliWWNCToxApYwfRFf8hIUf2x7E6sn2MmIfwAJzokI';
 const PRIVATE_KEY = '8hwb4iOJ05LqzuhAi4r8sHccPh_HgkOd_ugbAGhZE74';
@@ -71,7 +71,7 @@ didServer.post('/register', function(req, res) {
 
   registrationSecret = registrationSecret.toString();
 
-  const challenge = didClient.createNonce();
+  const challenge = DidClient.createNonce();
   dids[id] = {didDocument, signature, secret, challenge, registrationSecret};
 
   res.json({ id, challenge });
@@ -127,7 +127,7 @@ didServer.post('/supersede', function(req, res) {
   if (!supersedes) return res.renderJSONError('supersedes is required', 400);
 
   const id = didDocument.id;
-  const challenge = didClient.createNonce();
+  const challenge = DidClient.createNonce();
 
   if (id in dids)
     return res.renderJSONError('JWT-DID already exists', 401);

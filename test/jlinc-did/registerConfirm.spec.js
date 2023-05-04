@@ -15,28 +15,28 @@ describe('jlincDid.registerConfirm', function() {
   context('when given invalid arguments', function(){
     it('should throw an error', async function(){
       await expect(
-        this.didClient.registerConfirm()
+        this.DidClient.registerConfirm()
       ).to.be.rejected;
 
       await expect(
-        this.didClient.registerConfirm({})
+        this.DidClient.registerConfirm({})
       ).to.be.rejectedWith('did is required');
 
       await expect(
-        this.didClient.registerConfirm({
+        this.DidClient.registerConfirm({
           did: 'xxx',
         })
       ).to.be.rejectedWith('registrationSecret is required');
 
       await expect(
-        this.didClient.registerConfirm({
+        this.DidClient.registerConfirm({
           did: 'xxx',
           registrationSecret: 'yyyy',
         })
       ).to.be.rejectedWith('challenge is required');
 
       await expect(
-        this.didClient.registerConfirm({
+        this.DidClient.registerConfirm({
           did: 'xxx',
           registrationSecret: 'yyyy',
           challenge: 'pppp',
@@ -44,7 +44,7 @@ describe('jlincDid.registerConfirm', function() {
       ).to.be.rejectedWith('keys is required');
 
       await expect(
-        this.didClient.registerConfirm({
+        this.DidClient.registerConfirm({
           did: 'xxx',
           registrationSecret: 'yyyy',
           challenge: 'pppp',
@@ -57,14 +57,14 @@ describe('jlincDid.registerConfirm', function() {
   context('when given valid arguments', function(){
     it('should send a request to the did server', async function(){
 
-      this.sinon.stub(this.didClient, 'request');
+      this.sinon.stub(this.DidClient, 'request');
 
-      const keys = this.didClient.createKeys();
+      const keys = this.DidClient.createKeys();
       const did = `did:jlinc:${keys.signingPublicKey}`;
       const registrationSecret = createRegistrationSecret();
       const challenge = createRegistrationSecret();
 
-      const entity = await this.didClient.registerConfirm({
+      const entity = await this.DidClient.registerConfirm({
         did, registrationSecret, challenge, keys,
       });
 
@@ -74,8 +74,8 @@ describe('jlincDid.registerConfirm', function() {
         registrationSecret,
       });
 
-      expect(this.didClient.request).to.have.been.calledOnce;
-      const options = this.didClient.request.args[0][0];
+      expect(this.DidClient.request).to.have.been.calledOnce;
+      const options = this.DidClient.request.args[0][0];
       expect(options.method).to.equal('post');
       expect(options.path).to.equal('/confirm');
       expect(options.body).to.have.all.keys('challengeResponse');
@@ -97,13 +97,13 @@ describe('jlincDid.registerConfirm', function() {
 
   context('when given an invalid registrationSecret', function(){
     it('should throw an error', async function(){
-      const keys = this.didClient.createKeys();
+      const keys = this.DidClient.createKeys();
       const { did, challenge }
-        = await this.didClient.registerRequest({ keys });
+        = await this.DidClient.registerRequest({ keys });
       const registrationSecret = createRegistrationSecret();
 
       await expect(
-        this.didClient.registerConfirm({
+        this.DidClient.registerConfirm({
           did, registrationSecret, challenge, keys,
         })
       ).to.be.rejectedWith('invalid registrationSecret');
@@ -111,13 +111,13 @@ describe('jlincDid.registerConfirm', function() {
   });
   context('when given an invalid challenge', function(){
     it('should throw an error', async function(){
-      const keys = this.didClient.createKeys();
+      const keys = this.DidClient.createKeys();
       const { did, registrationSecret }
-        = await this.didClient.registerRequest({ keys });
+        = await this.DidClient.registerRequest({ keys });
       const challenge = createRegistrationSecret();
 
       await expect(
-        this.didClient.registerConfirm({
+        this.DidClient.registerConfirm({
           did, registrationSecret, challenge, keys,
         })
       ).to.be.rejectedWith('invalid keys or challenge');
@@ -126,11 +126,11 @@ describe('jlincDid.registerConfirm', function() {
 
   context('when given an entity that does match the challenge', function(){
     it('should not throw an error', async function(){
-      const keys = this.didClient.createKeys();
+      const keys = this.DidClient.createKeys();
       const { did, registrationSecret, challenge }
-        = await this.didClient.registerRequest({ keys });
+        = await this.DidClient.registerRequest({ keys });
 
-      const entity = await this.didClient.registerConfirm({
+      const entity = await this.DidClient.registerConfirm({
         did, registrationSecret, challenge, keys,
       });
 

@@ -3,15 +3,15 @@
 const b64 = require('urlsafe-base64');
 const sodium = require('sodium-native');
 
-const didClient = require('../../jlinc-did');
+const { DidClient } = require('../..');
 
-describe('didClient.createDidDocument', function() {
+describe('DidClient.createDidDocument', function() {
   it('should be a function', function() {
-    expect(didClient.createDidDocument).to.be.a('function');
+    expect(DidClient.createDidDocument).to.be.a('function');
   });
   it('should require keys', function() {
     const expectArgs = args =>
-      expect(() => didClient.createDidDocument(args))
+      expect(() => DidClient.createDidDocument(args))
     ;
     expectArgs({}).to.throw('keys is required');
     expectArgs({
@@ -31,13 +31,13 @@ describe('didClient.createDidDocument', function() {
     }).to.throw('keys.encryptingPublicKey is required');
   });
   it('should created a didDocument signed with those keys', function(){
-    const keys = didClient.createKeys();
-    const result =  didClient.createDidDocument({ keys });
+    const keys = DidClient.createKeys();
+    const result =  DidClient.createDidDocument({ keys });
     expect(result).to.have.all.keys(['didDocument', 'signature']);
     const id = `did:jlinc:${keys.signingPublicKey}`;
     expect(result.didDocument.created).to.be.aNowishISOString();
     expect(result.didDocument).to.deep.equal({
-      '@context': didClient.contextUrl,
+      '@context': DidClient.getConfig().contextUrl,
       id,
       created: result.didDocument.created,
       publicKey: [

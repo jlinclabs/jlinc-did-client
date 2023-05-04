@@ -14,7 +14,7 @@ module.exports = function createDidDocument(options = {}) {
   const created = this.now();
 
   const didDocument = {
-    '@context': this.contextUrl,
+    '@context': this.getConfig().contextUrl,
     id,
     created,
     publicKey: [

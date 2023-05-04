@@ -13,8 +13,10 @@ module.exports =  {
 
   now: require('./now'),
 
-  contextUrl: 'https://w3id.org/did/v1',
+  // contextUrl: 'https://w3id.org/did/v1',
   // didServerUrl: 'http://localhost:5001/',
+  getConfig: require('./getConfig'),
+  setConfig: require('./setConfig'),
 
   // Custom Errors
   JlincDidError,

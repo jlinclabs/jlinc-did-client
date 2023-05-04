@@ -7,7 +7,7 @@
 
 //   context('when DID does not exist', function() {
 //     it('should respond with a 404 and success false', async function() {
-//       const response = await this.didClient.revokeDID(
+//       const response = await this.DidClient.revokeDID(
 //         'did:jlinc:xxxxxxxxxxxxxxxf4k31337k3yxxxxxxxxxxxxxxxx',
 //         'xxxxxxxxxxxxxxxxxxf4k31337r3g157r47109n53cr37xxxxxxxxxxxxxxxxxxx'
 //       );
@@ -26,7 +26,7 @@
 
 //     context('with an invalid registration secret', function() {
 //       it('should respond with the error "signature is invalid"', async function() {
-//         const response = await this.didClient.revokeDID(
+//         const response = await this.DidClient.revokeDID(
 //           this.didId,
 //           'xxxxxxxxxxxxxxxxxxf4k31337r3g157r47109n53cr37xxxxxxxxxxxxxxxxxxx'
 //         );
@@ -39,7 +39,7 @@
 
 //     context('with a valid registration secret', function() {
 //       it('should revoke the DID', async function() {
-//         let response = await this.didClient.revokeDID(
+//         let response = await this.DidClient.revokeDID(
 //           this.didId,
 //           this.entity.registrationSecret,
 //         );
