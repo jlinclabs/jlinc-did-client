@@ -8,7 +8,7 @@
 //   context('with an invalid DID id', function() {
 //     it('should respond with a 404 and success false', async function() {
 //       expect(
-//         await this.didClient.resolve('did:jlinc:xxxxxxxxxxxxxxxf4k31337k3yxxxxxxxxxxxxxxxx')
+//         await this.DidClient.resolve('did:jlinc:xxxxxxxxxxxxxxxf4k31337k3yxxxxxxxxxxxxxxxx')
 //       ).to.matchPattern({
 //         success: false,
 //         status: 404,
@@ -23,7 +23,7 @@
 //     });
 
 //     it('should resolve the DID', async function() {
-//       const response = await this.didClient.resolve(this.didId);
+//       const response = await this.DidClient.resolve(this.didId);
 //       expect(response).to.matchPattern({
 //         success: true,
 //         resolved: { did: _.isObject },
@@ -54,11 +54,11 @@
 
 //     context('when the DID has been revoked', function() {
 //       beforeEach(async function() {
-//         await this.didClient.revokeDID(this.didId, this.entity.registrationSecret);
+//         await this.DidClient.revokeDID(this.didId, this.entity.registrationSecret);
 //       });
 
 //       it('should respond with status 410', async function() {
-//         expect(await this.didClient.resolve(this.didId)).to.matchPattern({
+//         expect(await this.DidClient.resolve(this.didId)).to.matchPattern({
 //           success: false,
 //           status: 410,
 //           id: this.didId,
@@ -79,7 +79,7 @@
 
 //       it('should respond with status 303', async function() {
 //         expect(
-//           await this.didClient.resolve(this.didId)
+//           await this.DidClient.resolve(this.didId)
 //         ).to.matchPattern({
 //           success: false,
 //           status: 303,
@@ -89,7 +89,7 @@
 
 //       context('when resolving root', function () {
 //         it('should resolve the current DID matching the original DID ID', async function() {
-//           const response = await this.didClient.resolve(this.didId, true);
+//           const response = await this.DidClient.resolve(this.didId, true);
 //           expect(response.success).to.be.true;
 //           const {
 //             resolved: {

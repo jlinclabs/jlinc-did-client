@@ -13,7 +13,9 @@ module.exports =  {
 
   now: require('./now'),
 
-  contextUrl: 'https://w3id.org/did/v1',
+  // Config
+  getConfig: require('./getConfig'),
+  setConfig: require('./setConfig'),
 
   // Custom Errors
   JlincDidError,

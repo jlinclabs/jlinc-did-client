@@ -6,15 +6,15 @@ describe('registerings two DIDs', function() {
   withDidServer();
 
   it('should work', async function() {
-    const { didClient } = this;
+    const { DidClient } = this;
 
-    const bob = await didClient.register();
+    const bob = await DidClient.register();
     expect(bob).to.be.anEntity();
 
     expect(
-      await didClient.resolve({ did: bob.did })
+      await DidClient.resolve({ did: bob.did })
     ).to.matchPattern({
-      '@context': didClient.contextUrl,
+      '@context': DidClient.getConfig().contextUrl,
       created: _.isDatetimeInISOFormat,
       id: bob.did,
       publicKey: [
@@ -33,13 +33,13 @@ describe('registerings two DIDs', function() {
       ]
     });
 
-    const alice = await didClient.register();
+    const alice = await DidClient.register();
     expect(alice).to.be.anEntity();
 
     expect(
-      await didClient.resolve({ did: alice.did })
+      await DidClient.resolve({ did: alice.did })
     ).to.matchPattern({
-      '@context': didClient.contextUrl,
+      '@context': DidClient.getConfig().contextUrl,
       created: _.isDatetimeInISOFormat,
       id: alice.did,
       publicKey: [

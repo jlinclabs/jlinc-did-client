@@ -1,9 +1,10 @@
 'use strict';
 
 const b64 = require('urlsafe-base64');
-const sodium = require('sodium').api;
+const sodium = require('sodium-native');
 
-module.exports = function createDidDocument({ keys }) {
+module.exports = function createDidDocument(options = {}) {
+  const { keys } = options;
   if (!keys) throw new Error('keys is required');
   if (!keys.signingPublicKey) throw new Error('keys.signingPublicKey is required');
   if (!keys.signingPrivateKey) throw new Error('keys.signingPrivateKey is required');
@@ -13,7 +14,7 @@ module.exports = function createDidDocument({ keys }) {
   const created = this.now();
 
   const didDocument = {
-    '@context': this.contextUrl,
+    '@context': this.getConfig().contextUrl,
     id,
     created,
     publicKey: [
@@ -32,14 +33,18 @@ module.exports = function createDidDocument({ keys }) {
     ],
   };
 
-  const signature = b64.encode(
-    sodium.crypto_sign_detached(
-      sodium.crypto_hash_sha256(
-        Buffer.from(`${id}.${created}`)
-      ),
-      b64.decode(keys.signingPrivateKey)
-    )
+  let hash = Buffer.alloc(sodium.crypto_hash_sha256_BYTES);
+  sodium.crypto_hash_sha256(
+    hash,
+    Buffer.from(`${id}.${created}`)
   );
+  let signature = Buffer.alloc(sodium.crypto_sign_BYTES);
+  sodium.crypto_sign_detached(
+    signature,
+    hash,
+    b64.decode(keys.signingPrivateKey)
+  );
+  signature = b64.encode(signature);
 
   return { didDocument, signature };
 };

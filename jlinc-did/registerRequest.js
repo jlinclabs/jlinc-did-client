@@ -1,6 +1,6 @@
 'use strict';
 
-const sodium = require('sodium').api;
+const sodium = require('sodium-native');
 const b64 = require('urlsafe-base64');
 
 module.exports = async function registerRequest({ keys }) {
@@ -12,7 +12,7 @@ module.exports = async function registerRequest({ keys }) {
   const serverPublicKey = await this.getServerPublicKey();
   const registrationSecret = createRegistrationSecret();
 
-  const { id: did, challenge } = await this.request({
+  const response = await this.request({
     method: 'post',
     path: '/register',
     body: {
@@ -26,21 +26,27 @@ module.exports = async function registerRequest({ keys }) {
     },
   });
 
+  if (!response.id) throw new Error(`expected id from did server`);
+  if (!response.challenge) throw new Error(`expected challenge from did server`);
+  const { id: did, challenge } = response;
+
   return { did, registrationSecret, challenge };
 };
 
 function createRegistrationSecret(){
   const buffer = Buffer.alloc(32);
-  sodium.randombytes(buffer);
+  sodium.randombytes_buf(buffer);
   return buffer.toString('hex');
 }
 
 function createRegistrantSecret({ serverPublicKey, registrationSecret, encryptingPrivateKey }) {
   const nonce = Buffer.alloc(sodium.crypto_box_NONCEBYTES);
-  sodium.randombytes(nonce);
-
-  const cyphertext = sodium.crypto_box(
-    Buffer.from(registrationSecret),
+  sodium.randombytes_buf(nonce);
+  const message = Buffer.from(registrationSecret);
+  const cyphertext = Buffer.alloc(message.length + sodium.crypto_box_MACBYTES);
+  sodium.crypto_box_easy(
+    cyphertext,
+    message,
     nonce,
     b64.decode(serverPublicKey),
     b64.decode(encryptingPrivateKey)

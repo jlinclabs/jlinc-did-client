@@ -6,7 +6,7 @@ const chaiAsPromised = require('chai-as-promised');
 const chaiMatchPattern = require('chai-match-pattern');
 const sinonChai = require('sinon-chai');
 const jsonwebtoken = require('jsonwebtoken');
-const sodium = require('sodium').api;
+const sodium = require('sodium-native');
 const b64 = require('urlsafe-base64');
 
 chai.use(chaiAsPromised);
@@ -51,9 +51,17 @@ chai.Assertion.addMethod('aDatetimeInISOFormat', function(){
   expect(this._obj).to.equal(date.toISOString());
 });
 
-chai.Assertion.addMethod('aRecentSecondsFromEpochInteger', function(){
-  const now = Math.floor(Date.now() / 1000);
-  expect(this._obj).to.be.within(now - 1, now);
+chai.Assertion.addMethod('nowish', function(){
+  expect(this._obj).to.be.within(
+    new Date(Date.now() - 5),
+    new Date(Date.now() + 1),
+  );
+});
+
+chai.Assertion.addMethod('aNowishISOString', function(){
+  expect(this._obj).to.be.a('string');
+  expect(this._obj).to.match(/^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d.\d\d\dZ$/);
+  expect(new Date(this._obj)).to.be.nowish();
 });
 
 chai.Assertion.addMethod('aNonce', function(){
@@ -97,16 +105,21 @@ chai.Assertion.addMethod('aDid', function () {
 
 chai.Assertion.addMethod('aCryptoSignKeypair', function(){
   const { signingPublicKey, signingPrivateKey } = this._obj;
-  const itemToSign = `${Math.random()} is my favorite number`;
-  expect(
-    sodium.crypto_sign_open(
-      sodium.crypto_sign(
-        Buffer.from(itemToSign, 'utf8'),
-        b64.decode(signingPrivateKey),
-      ),
-      b64.decode(signingPublicKey)
-    ).toString()
-  ).to.equal(itemToSign);
+  const message = `${Math.random()} is my favorite number`;
+  const itemToSign = Buffer.from(message, 'utf8');
+  const signature = Buffer.alloc(sodium.crypto_sign_BYTES + itemToSign.length);
+  sodium.crypto_sign(
+    signature,
+    itemToSign,
+    b64.decode(signingPrivateKey),
+  );
+  const messageOut = Buffer.alloc(signature.length - sodium.crypto_sign_BYTES);
+  sodium.crypto_sign_open(
+    messageOut,
+    signature,
+    b64.decode(signingPublicKey)
+  );
+  expect(messageOut.toString()).to.equal(message);
 });
 
 chai.Assertion.addMethod('anEntity', function(){

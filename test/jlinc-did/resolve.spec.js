@@ -6,14 +6,14 @@ describe('jlincDid.resolve', function() {
   withDidServer();
   context('when the did exists', function(){
     beforeEach(async function(){
-      const entity = await this.didClient.register();
+      const entity = await this.DidClient.register();
       Object.assign(this, { entity });
     });
     it('should return the did document', async function(){
-      const { didClient, entity } = this;
+      const { DidClient, entity } = this;
 
-      expect( await didClient.resolve({ did: entity.did }) ).to.matchPattern({
-        '@context': didClient.contextUrl,
+      expect( await DidClient.resolve({ did: entity.did }) ).to.matchPattern({
+        '@context': DidClient.getConfig().contextUrl,
         created: _.isDatetimeInISOFormat,
         id: entity.did,
         publicKey: [
@@ -36,10 +36,10 @@ describe('jlincDid.resolve', function() {
 
   context('when the did doesnt exist', function(){
     it('should return the did document', async function(){
-      const { didClient } = this;
+      const { DidClient } = this;
       await expect(
-        didClient.resolve({ did: 'did:jlinc:nobodysuspectsthespanishinquizision' })
-      ).to.be.rejectedWith(didClient.DIDNotFoundError, 'did not found');
+        DidClient.resolve({ did: 'did:jlinc:SHDDlR-jr4JYa7FqFNaRd495p1Sm3eir2jVVVRf09j0' })
+      ).to.be.rejectedWith(DidClient.DIDNotFoundError, 'did not found');
     });
   });
 });
