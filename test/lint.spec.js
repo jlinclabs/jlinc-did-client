@@ -11,10 +11,14 @@ describe('lint', function(){
     linter.stdout.on('data', (chunk) => {
       stdout += chunk;
     });
+    let stderr;
+    linter.stderr.on('data', (chunk) => {
+      stderr += chunk;
+    });
 
     linter.on('close', (code) => {
       if (code === 0) { return done(); }
-      done(new Error(`linter failed\n\n${stdout}`));
+      done(new Error(`linter failed\n\n${stdout}\n\n${stderr}`));
     });
   });
 });

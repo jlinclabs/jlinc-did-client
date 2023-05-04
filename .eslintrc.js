@@ -2,6 +2,7 @@ module.exports = {
   "env": {
     "browser": false,
     "es6": true,
+    "commonjs": true,
     "mocha": true,
   },
   "globals": {

@@ -3,7 +3,7 @@
 const request = require('request-promise');
 
 const withSinon = require('../helpers/withSinon');
-const didClient = require('../../jlinc-did');
+const { DidClient } = require('../..');
 
 describe('jlincDid.request', function() {
   withSinon();
@@ -11,38 +11,38 @@ describe('jlincDid.request', function() {
   context('when missing required arguments', function(){
     it('should throw an error', async function(){
       await expect(
-        didClient.request({})
+        DidClient.request({})
       ).to.be.rejectedWith('method is required');
 
       await expect(
-        didClient.request({ method: 'get' })
+        DidClient.request({ method: 'get' })
       ).to.be.rejectedWith('path is required');
     });
   });
 
-  context('when jlincDid.didServerUrl is not set', function(){
+  context('when didServerUrl is not set', function(){
     beforeEach(function(){
-      delete didClient.didServerUrl;
+      delete DidClient.getConfig().didServerUrl;
     });
     it('should throw an error', async function(){
       await expect(
-        didClient.request({
+        DidClient.request({
           method: 'get',
           path: '/',
         })
-      ).to.be.rejectedWith('jlincDidClient.didServerUrl must be set');
+      ).to.be.rejectedWith('You must set didServerUrl');
     });
   });
 
-  context('when jlincDid.didServerUrl is set', function(){
+  context('when didServerUrl is set', function(){
     beforeEach(function(){
-      didClient.didServerUrl = 'http://example.com/';
+      DidClient.setConfig({didServerUrl: 'http://example.com/'});
     });
 
     context('when method is invalid', function(){
       it('should throw an error', async function(){
         await expect(
-          didClient.request({
+          DidClient.request({
             method: 'frog',
             path: '/',
           })
@@ -60,7 +60,7 @@ describe('jlincDid.request', function() {
             }
           };
         });
-        await didClient.request({
+        await DidClient.request({
           method: 'get',
           path: '/',
         });
@@ -76,8 +76,8 @@ describe('jlincDid.request', function() {
         });
 
         // when there is no trailing slash
-        didClient.didServerUrl = 'https://fark.com';
-        const response = await didClient.request({
+        DidClient.setConfig({didServerUrl: 'https://fark.com/'});
+        const response = await DidClient.request({
           method: 'get',
           path: '/foo/bar',
         });
@@ -110,16 +110,16 @@ describe('jlincDid.request', function() {
         }
       });
       await expect(
-        didClient.request({ method: 'get', path: '/' })
-      ).to.be.rejectedWith(didClient.RequestError, 'RequestError: "there be dragons arrrrr"');
+        DidClient.request({ method: 'get', path: '/' })
+      ).to.be.rejectedWith(DidClient.RequestError, 'RequestError: "there be dragons arrrrr"');
 
       request.get.resolves({
         statusCode: 400,
         body: null
       });
       await expect(
-        didClient.request({ method: 'get', path: '/' })
-      ).to.be.rejectedWith(didClient.RequestError, 'RequestError: "statusCode=400 method=get path=/"');
+        DidClient.request({ method: 'get', path: '/' })
+      ).to.be.rejectedWith(DidClient.RequestError, 'RequestError: "statusCode=400 method=get path=/"');
 
     });
   });
@@ -130,8 +130,8 @@ describe('jlincDid.request', function() {
 
       request.get.resolves({ statusCode: 404 });
       await expect(
-        didClient.request({ method: 'get', path: '/' })
-      ).to.be.rejectedWith(didClient.ResourceNotFoundErro, 'Resource Not Found: method=get path=/');
+        DidClient.request({ method: 'get', path: '/' })
+      ).to.be.rejectedWith(DidClient.ResourceNotFoundErro, 'Resource Not Found: method=get path=/');
 
     });
   });

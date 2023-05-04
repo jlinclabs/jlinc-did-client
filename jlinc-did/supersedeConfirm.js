@@ -1,8 +1,8 @@
 'use strict';
 
-const sodium = require('sodium').api;
-const b64 = require('urlsafe-base64');
 const jwt = require('jsonwebtoken');
+
+const signHash = require('./signHash');
 
 module.exports = async function supersedeConfirm({ entity, keys, newDid, challenge }) {
   if (!entity) throw new Error('entity is required');
@@ -12,12 +12,7 @@ module.exports = async function supersedeConfirm({ entity, keys, newDid, challen
   if (!newDid) throw new Error('newDid is required');
   if (!challenge) throw new Error('challenge is required');
 
-  const signature = b64.encode(
-    sodium.crypto_sign_detached(
-      sodium.crypto_hash_sha256(Buffer.from(challenge)),
-      b64.decode(keys.signingPrivateKey)
-    )
-  );
+  const signature = signHash(challenge, keys.signingPrivateKey);
 
   const challengeResponse = jwt.sign(
     { id: newDid, signature },
