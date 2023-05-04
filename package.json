@@ -1,6 +1,6 @@
 {
   "name": "jlinc-did-client",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "A node implementation of a JLINC DID client",
   "private": true,
   "main": "./index.js",
