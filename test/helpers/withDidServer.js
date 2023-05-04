@@ -1,10 +1,10 @@
 'use strict';
 
-const didClient = require('../../jlinc-did');
+const { DidClient } = require('../..');
 const didServer = require('./didServer');
 
 const didServerHelpers = {
-  didClient,
+  DidClient,
 };
 
 module.exports = function withDidServer(){
@@ -12,7 +12,7 @@ module.exports = function withDidServer(){
   before(async function() {
     Object.assign(this, didServerHelpers);
     await didServer.start();
-    didClient.didServerUrl = didServer.url;
+    DidClient.getConfig().didServerUrl = didServer.url;
     this.SERVER_PUBLIC_KEY = didServer.PUBLIC_KEY;
   });
 

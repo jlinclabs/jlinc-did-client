@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "A node implementation of a JLINC DID client",
   "private": true,
-  "main": "./jlinc-did/index.js",
+  "main": "./index.js",
   "scripts": {
     "test": "./scripts/test"
   },
@@ -26,7 +26,7 @@
     "jsonwebtoken": "^8.3.0",
     "request": "^2.88.0",
     "request-promise": "^4.2.2",
-    "sodium": "^3.0.2",
+    "sodium-native": "^4.0.1",
     "urlsafe-base64": "^1.0.0"
   },
   "devDependencies": {
@@ -38,7 +38,7 @@
     "eslint": "^5.0.1",
     "express": "^4.17.1",
     "istanbul": "^0.4.5",
-    "mocha": "^5.2.0",
+    "mocha": "^10.2.0",
     "sinon": "^7.2.2",
     "sinon-chai": "^3.3.0"
   }

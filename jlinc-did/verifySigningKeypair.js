@@ -1,6 +1,6 @@
 'use strict';
 
-const sodium = require('sodium').api;
+const sodium = require('sodium-native');
 const b64 = require('urlsafe-base64');
 
 module.exports = function verifySigningKeypair({signingPublicKey, signingPrivateKey}) {
@@ -9,21 +9,25 @@ module.exports = function verifySigningKeypair({signingPublicKey, signingPrivate
   if (typeof signingPublicKey !== 'string') throw new Error('signingPublicKey must of type string');
   if (typeof signingPrivateKey !== 'string') throw new Error('signingPrivateKey must of type string');
 
-  const itemToSign = `${Math.random()} is my favorite number`;
+  const itemToSign = Buffer.from(`${Math.random()} is my favorite number`, 'utf8');
 
-  const signedItem = sodium.crypto_sign(
-    Buffer.from(itemToSign, 'utf8'),
+  const signature = Buffer.alloc(itemToSign.length + sodium.crypto_sign_BYTES);
+  sodium.crypto_sign(
+    signature,
+    itemToSign,
     b64.decode(signingPrivateKey),
   );
 
-  if (!signedItem) throw new Error('invalid keypair: failed to sign');
+  // if (!signature) throw new Error('invalid keypair: failed to sign');
 
-  const decodedItem = sodium.crypto_sign_open(
-    signedItem,
+  const decodedItem = Buffer.alloc(signature.length - sodium.crypto_sign_BYTES);
+  const decodeSuccess = sodium.crypto_sign_open(
+    decodedItem,
+    signature,
     b64.decode(signingPublicKey)
   );
 
-  if (!decodedItem) throw new Error('invalid keypair: failed to decode signed item');
+  if (!decodeSuccess) throw new Error('invalid keypair: failed to decode signed item');
 
   return true;
 };

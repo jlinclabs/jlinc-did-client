@@ -1,7 +1,7 @@
 'use strict';
 
 const b64 = require('urlsafe-base64');
-const sodium = require('sodium').api;
+const sodium = require('sodium-native');
 
 module.exports = function createDidDocument(options = {}) {
   const { keys } = options;
@@ -14,7 +14,7 @@ module.exports = function createDidDocument(options = {}) {
   const created = this.now();
 
   const didDocument = {
-    '@context': this.contextUrl,
+    '@context': this.getConfig().contextUrl,
     id,
     created,
     publicKey: [
@@ -33,14 +33,18 @@ module.exports = function createDidDocument(options = {}) {
     ],
   };
 
-  const signature = b64.encode(
-    sodium.crypto_sign_detached(
-      sodium.crypto_hash_sha256(
-        Buffer.from(`${id}.${created}`)
-      ),
-      b64.decode(keys.signingPrivateKey)
-    )
+  let hash = Buffer.alloc(sodium.crypto_hash_sha256_BYTES);
+  sodium.crypto_hash_sha256(
+    hash,
+    Buffer.from(`${id}.${created}`)
   );
+  let signature = Buffer.alloc(sodium.crypto_sign_BYTES);
+  sodium.crypto_sign_detached(
+    signature,
+    hash,
+    b64.decode(keys.signingPrivateKey)
+  );
+  signature = b64.encode(signature);
 
   return { didDocument, signature };
 };

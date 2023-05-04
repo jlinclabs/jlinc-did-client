@@ -8,10 +8,10 @@ describe('jlincDid.supersedeRequest', function() {
   context('whe given an invalid arguments', function() {
     it('should throw an error', async function() {
       await expect(
-        this.didClient.supersedeRequest({})
+        this.DidClient.supersedeRequest({})
       ).to.be.rejectedWith('did is required');
       await expect(
-        this.didClient.supersedeRequest({
+        this.DidClient.supersedeRequest({
           did: 'did:jlinc:xxxx',
         })
       ).to.be.rejectedWith('keys is required');
@@ -20,14 +20,14 @@ describe('jlincDid.supersedeRequest', function() {
 
   context('whe given an valid did', function() {
     beforeEach(async function(){
-      this.entity = await this.didClient.register();
+      this.entity = await this.DidClient.register();
       expect(this.entity).to.be.anEntity();
     });
     it('should return { newDid, challenge }', async function() {
-      const { didClient, entity } = this;
-      const keys = didClient.createKeys();
+      const { DidClient, entity } = this;
+      const keys = DidClient.createKeys();
       expect(
-        await didClient.supersedeRequest({ did: entity.did, keys})
+        await DidClient.supersedeRequest({ did: entity.did, keys})
       ).to.matchPattern({
         newDid: _.isDid,
         challenge: _.isString,
