@@ -22,7 +22,6 @@ module.exports =  {
   JlincDidError,
   RequestError: class RequestError extends JlincDidError {},
   ResourceNotFoundError: class ResourceNotFoundError extends JlincDidError {},
-  // CreateRegistrantSecretError: class CreateRegistrantSecretError extends JlincDidError {},
   ResolutionError: class ResolutionError extends JlincDidError {},
   DIDNotFoundError: class DIDNotFoundError extends JlincDidError {},
   EntityRegistrationError: class EntityRegistrationError extends JlincDidError {},
@@ -39,7 +38,6 @@ module.exports =  {
   createKeys: require('./createKeys'),
   createDidDocument: require('./createDidDocument'),
   createNonce: require('./createNonce'),
-  // createRegistrantSecret: require('./createRegistrantSecret'),
 
   // resolving DIDs
   resolve: require('./resolve'),
