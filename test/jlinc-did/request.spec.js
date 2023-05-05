@@ -1,6 +1,6 @@
 'use strict';
 
-const request = require('request-promise');
+const axios = require('axios');
 
 const withSinon = require('../helpers/withSinon');
 const { DidClient } = require('../..');
@@ -52,10 +52,10 @@ describe('jlincDid.request', function() {
 
     context('when method is valid', function(){
       it('should return the response body', async function(){
-        this.sinon.stub(request, 'get').callsFake(() => {
+        this.sinon.stub(axios, 'request').callsFake(() => {
           return {
-            statusCode: 200,
-            body: {
+            status: 200,
+            data: {
               this_is_the_body: 'yup',
             }
           };
@@ -64,15 +64,12 @@ describe('jlincDid.request', function() {
           method: 'get',
           path: '/',
         });
-        expect(request.get).to.have.been.calledOnce;
-        expect(request.get).to.have.been.calledWith({
+        expect(axios.request).to.have.been.calledOnce;
+        expect(axios.request).to.have.been.calledWith({
           method: 'get',
           url: 'http://example.com/',
-          body: undefined,
-          json: true,
-          resolveWithFullResponse: true,
-          simple: false,
-          followRedirect: undefined,
+          data: undefined,
+          responseType: 'json',
         });
 
         // when there is no trailing slash
@@ -81,15 +78,12 @@ describe('jlincDid.request', function() {
           method: 'get',
           path: '/foo/bar',
         });
-        expect(request.get).to.have.been.calledTwice;
-        expect(request.get).to.have.been.calledWith({
+        expect(axios.request).to.have.been.calledTwice;
+        expect(axios.request).to.have.been.calledWith({
           method: 'get',
           url: 'https://fark.com/foo/bar',
-          body: undefined,
-          json: true,
-          resolveWithFullResponse: true,
-          simple: false,
-          followRedirect: undefined,
+          data: undefined,
+          responseType: 'json',
         });
         expect(response).to.deep.equal({
           this_is_the_body: 'yup',
@@ -101,11 +95,11 @@ describe('jlincDid.request', function() {
 
   context('when the server responds with an error', function(){
     it('should throw a RequestError', async function(){
-      this.sinon.stub(request, 'get');
+      this.sinon.stub(axios, 'request');
 
-      request.get.resolves({
-        statusCode: 400,
-        body: {
+      axios.request.resolves({
+        status: 400,
+        data: {
           error: 'there be dragons arrrrr',
         }
       });
@@ -113,9 +107,9 @@ describe('jlincDid.request', function() {
         DidClient.request({ method: 'get', path: '/' })
       ).to.be.rejectedWith(DidClient.RequestError, 'RequestError: "there be dragons arrrrr"');
 
-      request.get.resolves({
-        statusCode: 400,
-        body: null
+      axios.request.resolves({
+        status: 400,
+        data: null
       });
       await expect(
         DidClient.request({ method: 'get', path: '/' })
@@ -126,9 +120,9 @@ describe('jlincDid.request', function() {
 
   context('when the server responds with a 404', function(){
     it('should throw a ResourceNotFoundErro', async function(){
-      this.sinon.stub(request, 'get');
+      this.sinon.stub(axios, 'request');
 
-      request.get.resolves({ statusCode: 404 });
+      axios.request.resolves({ status: 404 });
       await expect(
         DidClient.request({ method: 'get', path: '/' })
       ).to.be.rejectedWith(DidClient.ResourceNotFoundErro, 'Resource Not Found: method=get path=/');
