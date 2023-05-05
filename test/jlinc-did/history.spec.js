@@ -5,7 +5,7 @@ const withDidServer = require('../helpers/withDidServer');
 describe('jlincDid.history', function() {
   withDidServer();
 
-  context('whe given an invalid did', function() {
+  context('when given an invalid did', function() {
     it('should throw an error', async function() {
       const { DidClient } = this;
       await expect(

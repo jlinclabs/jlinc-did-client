@@ -10,7 +10,6 @@ module.exports = async function resolve({ did, root = false }) {
     const { did: didDocument } = await this.request({
       method: 'get',
       path: root ? `/root/${did}` : `/${did}`,
-      followRedirect: true,
     });
     return didDocument;
   }catch(error){

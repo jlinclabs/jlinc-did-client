@@ -23,9 +23,8 @@
   },
   "homepage": "https://github.com/jlinclabs/jlinc-did-client#readme",
   "dependencies": {
+    "axios": "^1.4.0",
     "jsonwebtoken": "^9.0.0",
-    "request": "^2.88.0",
-    "request-promise": "^4.2.2",
     "sodium-native": "^4.0.1",
     "urlsafe-base64": "^1.0.0"
   },
