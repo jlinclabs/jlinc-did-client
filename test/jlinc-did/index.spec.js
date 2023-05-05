@@ -3,8 +3,8 @@
 const { DidClient } = require('../..');
 
 describe('DidClient.version', function() {
-  it('should be 1.0.0', function(){
-    expect(DidClient.version).to.equal('1.0.0');
+  it('should be 1.0.1', function(){
+    expect(DidClient.version).to.equal('1.0.1');
   });
 });
 
