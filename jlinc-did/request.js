@@ -1,9 +1,9 @@
 'use strict';
 
 const URL = require('url');
-const request = require('request-promise');
+const axios = require('axios');
 
-module.exports = async function({ method, path, body, followRedirect }){
+module.exports = async function ({ method, path, body }) {
   const stack = (new Error).stack;
   const { RequestError, ResourceNotFoundError } = this;
 
@@ -20,35 +20,45 @@ module.exports = async function({ method, path, body, followRedirect }){
   if (!this.getConfig().didServerUrl) throw new Error(`You must set didServerUrl via setConfig()`);
   const url = URL.resolve(this.getConfig().didServerUrl, URL.resolve('/', path));
 
-  if (!(method in request)) throw new Error(`method is invalid`);
+  const validMethods = [
+    'request',
+    'get',
+    'delete',
+    'head',
+    'options',
+    'post',
+    'put',
+    'patch',
+  ];
+  if (validMethods.indexOf(method) < 0) throw new Error(`method is invalid`);
 
-  const requestOptions = {
-    method,
-    url,
-    body,
-    json: true,
-    resolveWithFullResponse: true,
-    simple: false,
-    followRedirect,
-  };
+  let response;
+  try {
+    response = await axios.request({
+      method,
+      url,
+      data: body,
+      responseType: 'json',
+    });
+  } catch (e) {
+    response = e.response;
+  }
 
-  const response = await request[method](requestOptions);
-
-  if (response.statusCode === 404){
+  if (response.status === 404){
     throw new ResourceNotFoundError(`Resource Not Found: method=${method} path=${path}`);
   }
 
   if (
-    response.statusCode < 200 ||
-    response.statusCode >= 300 ||
-    (response.body && response.body.error)
+    response.status < 200 ||
+    response.status >= 300 ||
+    (response.data && response.data.error)
   ) {
-    const errorMessage = (response.body && response.body.error) ||
-      `statusCode=${response.statusCode} method=${method} path=${path}`;
+    const errorMessage = (response.data && response.data.error) ||
+      `statusCode=${response.status} method=${method} path=${path}`;
     const error = new RequestError(`RequestError: "${errorMessage}"`);
     error.stack += stack;
     throw error;
   }
 
-  return response.body;
+  return response.data;
 };
